@@ -1,8 +1,15 @@
 import React from 'react';
+import styled from '@emotion/styled';
+
+const Container = styled.div`
+    background: #fef4ed;
+`;
 
 const Main: React.FC = () => {
     return (
-        <div>메인페이지</div>
+        <Container>
+            <div>메인페이지</div>
+        </Container>
     );
 }
 export default Main;
