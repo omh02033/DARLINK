@@ -7,9 +7,7 @@ declare global {
       auth: {
         uid: number;
         userId: string;
-        password?: string;
         signUpPath: string;
-        email: string;
         name: string;
       }
     }

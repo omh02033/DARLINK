@@ -4,10 +4,13 @@ export interface DBUser {
     password?: string;
     passwordSalt?: string;
     signUpPath: string;
-    email: string;
     name: string;
     points: number;
     regiTime: Date;
     temporaryPassword: string;
     forgetPwdStatus: string;
+}
+export interface DBAdmin {
+    uid: number;
+    userUid: number;
 }

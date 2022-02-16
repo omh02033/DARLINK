@@ -6,4 +6,4 @@ export default dotenv.config({
     __dirname,
     process.env.NODE_ENV === 'production' ? '.env' : '.env.dev'
   )
-})
+});
