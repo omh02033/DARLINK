@@ -13,6 +13,8 @@ import linkLogo from 'stylesheets/images/link.png';
 import { BsBoxSeam, BsHandIndex } from 'react-icons/bs';
 import { AiOutlineUser } from 'react-icons/ai';
 
+import 'react-toastify/dist/ReactToastify.css';
+
 const Container = styled.div`
     width: 100vw;
     height: 100vh;
@@ -21,7 +23,7 @@ const Container = styled.div`
     justify-content: space-evenly;
     align-items: center;
     flex-direction: column;
-    transition: all 0.4s ease;
+    transition: all 0.3s ease;
 `;
 const TopLogo = styled.div`
     width: 100%;
@@ -64,7 +66,7 @@ const MenuContainer = styled.div<{main: boolean}>`
     display: flex;
     justify-content: space-evenly;
     align-items: center;
-    transition: all 1s ease;
+    transition: all 0.3s ease;
 `;
 const MenuBtn = styled(Link)`
     height: 80%;
@@ -76,9 +78,12 @@ const MenuBtn = styled(Link)`
     cursor: pointer;
     color: black;
     text-decoration: none;
-    transition: all 0.4s ease;
+    transition: all 0.3s ease;
     &:hover {
         height: 100%;
+    }
+    &.active {
+        height: 110%;
     }
 `;
 const MenuDelivery = styled(BsBoxSeam)`
@@ -97,13 +102,22 @@ const MenuTitle = styled.span<{main: boolean}>`
     width: 100%;
     text-align: center;
     font: ${({main}) => main ? 1.5 : 1.2}em Sandoll Gothic B;
-    transition: all 0.4s ease;
+    transition: all 0.3s ease;
 `;
 
 const PageBox = styled.div<{main: boolean}>`
     width: 100%;
     height: ${({main}) => main ? 20 : 50 }%;
-    transition: all 0.4s ease;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: center;
+`;
+
+const Boundary = styled.div<{main: boolean}>`
+    width: 30%;
+    border: 2px solid black;
+    opacity: ${({main}) => main ? 0 : 1};
+    transition: all 0.2s ease;
 `;
 
 
@@ -122,6 +136,10 @@ const App: React.FC = () => {
 
     const isMain = location.pathname === '/';
 
+    const myPageActiveField = ["/login", "/myPage", "/signup"];
+    const directlyActiveField = ["/directlyExperience"];
+    const deliActiveField = ["/deliExperience"];
+
     return (
         <Suspense fallback={<Loading show />}>
             <Loading show={auth.user === undefined}/>
@@ -134,19 +152,26 @@ const App: React.FC = () => {
                     </LogoBox>
                 </TopLogo>
                 <MenuContainer main={isMain}>
-                    <MenuBtn to='/deliExperience'>
+                    <MenuBtn
+                    to='/deliExperience'
+                    className={deliActiveField.indexOf(location.pathname) !== -1 ? 'active' : ''}>
                         <MenuDelivery />
                         <MenuTitle main={isMain}>배송 체험</MenuTitle>
                     </MenuBtn>
-                    <MenuBtn to='/directlyExperience'>
+                    <MenuBtn
+                    to='/directlyExperience'
+                    className={directlyActiveField.indexOf(location.pathname) !== -1 ? 'active' : ''}>
                         <MenuExperience />
                         <MenuTitle main={isMain}>직접 체험</MenuTitle>
                     </MenuBtn>
-                    <MenuBtn to={auth.user ? '/myPage' : '/login'}>
+                    <MenuBtn
+                    to={auth.user ? '/myPage' : '/login'}
+                    className={myPageActiveField.indexOf(location.pathname) !== -1 ? 'active' : ''}>
                         <MenuMyPage />
                         <MenuTitle main={isMain}>마이페이지</MenuTitle>
                     </MenuBtn>
                 </MenuContainer>
+                <Boundary main={isMain} />
                 <PageBox main={isMain}>
                     <Routes>
                         <Route path='/' element={<Main />} />

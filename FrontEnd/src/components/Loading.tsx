@@ -25,6 +25,7 @@ const Container = styled.div<{status: TransitionStatus}>`
     display: flex;
     justify-content: center;
     align-items: center;
+    background: #fef4ed;
 `;
 const Box = styled.div`
     display: flex;
