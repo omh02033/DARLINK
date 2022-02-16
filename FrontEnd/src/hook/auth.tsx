@@ -1,13 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import {api} from 'api';
+import { api } from 'api';
 
 interface User {
     uid: number;
     userId: string;
-    password?: string;
     signUpPath: string;
-    email: string;
     name: string;
+    isAdmin: boolean;
 }
 
 const useProvideAuth = () => {

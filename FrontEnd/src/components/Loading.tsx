@@ -20,7 +20,6 @@ const Container = styled.div<{status: TransitionStatus}>`
     top: 0;
     left: 0;
     z-index: 1000;
-    background: #ffffff;
     overflow: hidden;
     display: flex;
     justify-content: center;

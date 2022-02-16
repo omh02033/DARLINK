@@ -1,17 +1,14 @@
 import React, { Suspense } from 'react';
-import { useLocation, Navigate, Routes, Route, Link } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import useAuth from 'hook/auth';
 import Loading from 'components/Loading';
-import { LoadableComponent } from '@loadable/component';
-import {
-    Login,
-    Main
-} from 'pages';
 import styled from '@emotion/styled';
 import linkLogo from 'stylesheets/images/link.png';
 import { BsBoxSeam, BsHandIndex } from 'react-icons/bs';
-import { AiOutlineUser } from 'react-icons/ai';
+import { AiOutlineUser, AiOutlineSetting } from 'react-icons/ai';
+import PrivateRouter from './privateRouter';
+import PublicRouter from './publicRouter';
 
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -24,6 +21,7 @@ const Container = styled.div`
     align-items: center;
     flex-direction: column;
     transition: all 0.3s ease;
+    position: relative;
 `;
 const TopLogo = styled.div`
     width: 100%;
@@ -98,6 +96,10 @@ const MenuMyPage = styled(AiOutlineUser)`
     width: 100%;
     height: 50%;
 `;
+const MenuAdmin = styled(AiOutlineSetting)`
+    width: 100%;
+    height: 50%;
+`;
 const MenuTitle = styled.span<{main: boolean}>`
     width: 100%;
     text-align: center;
@@ -120,16 +122,6 @@ const Boundary = styled.div<{main: boolean}>`
     transition: all 0.2s ease;
 `;
 
-
-const needAuth = <PageProps extends {}>(
-    Component: LoadableComponent<PageProps>
-) => {
-    return (params: PageProps) => {
-        const auth = useAuth();
-        return auth.user ? <Component {...params} /> : <Navigate to='/login' />;
-    }
-}
-
 const App: React.FC = () => {
     const auth = useAuth();
     const location = useLocation();
@@ -137,12 +129,13 @@ const App: React.FC = () => {
     const isMain = location.pathname === '/';
 
     const myPageActiveField = ["/login", "/myPage", "/signup"];
-    const directlyActiveField = ["/directlyExperience"];
+    const directActiveField = ["/directExperience"];
     const deliActiveField = ["/deliExperience"];
+    const manageActiveField = ["/manage"];
 
     return (
         <Suspense fallback={<Loading show />}>
-            <Loading show={auth.user === undefined}/>
+            <Loading show={auth?.user === undefined}/>
             <ToastContainer/>
             <Container>
                 <TopLogo>
@@ -159,24 +152,29 @@ const App: React.FC = () => {
                         <MenuTitle main={isMain}>배송 체험</MenuTitle>
                     </MenuBtn>
                     <MenuBtn
-                    to='/directlyExperience'
-                    className={directlyActiveField.indexOf(location.pathname) !== -1 ? 'active' : ''}>
+                    to='/directExperience'
+                    className={directActiveField.indexOf(location.pathname) !== -1 ? 'active' : ''}>
                         <MenuExperience />
                         <MenuTitle main={isMain}>직접 체험</MenuTitle>
                     </MenuBtn>
                     <MenuBtn
-                    to={auth.user ? '/myPage' : '/login'}
+                    to={auth?.user ? '/myPage' : '/login'}
                     className={myPageActiveField.indexOf(location.pathname) !== -1 ? 'active' : ''}>
                         <MenuMyPage />
                         <MenuTitle main={isMain}>마이페이지</MenuTitle>
                     </MenuBtn>
+                    {auth?.user?.isAdmin && (
+                        <MenuBtn
+                        to='/manage'
+                        className={manageActiveField.indexOf(location.pathname) !== -1 ? 'active' : ''}>
+                            <MenuAdmin />
+                            <MenuTitle main={isMain}>관리</MenuTitle>
+                        </MenuBtn>
+                    )}
                 </MenuContainer>
                 <Boundary main={isMain} />
                 <PageBox main={isMain}>
-                    <Routes>
-                        <Route path='/' element={<Main />} />
-                        <Route path='/login' element={<Login />} />
-                    </Routes>
+                    {auth?.user ? <PrivateRouter /> : <PublicRouter />}
                 </PageBox>
             </Container>
         </Suspense>

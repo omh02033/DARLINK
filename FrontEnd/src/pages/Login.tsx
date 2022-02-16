@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import { Link } from 'react-router-dom';
+import { api, setCookie } from 'api';
+import { toast } from 'react-toastify';
 
 import kakaoLoginImg from 'stylesheets/images/kakao_login.png';
-import { api, setCookie } from 'api';
+import FPPopup from 'components/popup/forgetPasswd';
+import CPPopup from 'components/popup/temporaryChangePwd';
 
 const Container = styled.div`
     width: 30%;
@@ -93,6 +96,9 @@ const Login: React.FC = () => {
     const [userId, setUserId] = useState<string>("");
     const [userPwd, setUserPwd] = useState<string>("");
 
+    const [FPpopupOn, setFPPopupOn] = useState<boolean>(false);
+    const [CPpopupOn, setCPPopupOn] = useState<boolean>(false);
+
     const loginSubmit = (e: any) => {
         e.preventDefault();
         if(!userId || !userPwd) return;
@@ -104,32 +110,62 @@ const Login: React.FC = () => {
         .then(res => {
             if(res.data.success) {
                 setCookie('token', res.data.token);
-                window.location.href = '/';
+                if(res.data.temporary) {
+                    setCPPopupOn(true);
+                } else window.location.href = '/';
             }
         });
     }
+
+    const kakaoLoginPage = () => {
+        const popup = window.open(`${process.env.REACT_APP_BACK_URL}/auth/login/kakao`, 'kakaoLogin', 'width=500,height=800,top=100,left=200,location=no');
+        const interval = setInterval(() => {
+            try {
+                if(popup == null || popup.closed) {
+                    clearInterval(interval);
+                    window.location.href = '/';
+                }
+            } catch(e) {
+                console.log(e);
+                toast.error("에러가 발생했어요.");
+            }
+        }, 1000);
+    }
+
+    const openFPModal = () => {
+        setFPPopupOn(true);
+    }
+
 
     return (
         <Container>
             <PageTitle>로그인</PageTitle>
             <LoginForm onSubmit={loginSubmit}>
                 <LoginField
-                type="text"
+                type="email"
                 onChange={(e) => {setUserId(e.target.value);}}
                 value={userId}
-                placeholder="ID" />
+                placeholder="이메일" />
                 <PasswordField>
                     <LoginField
                     type="password"
                     onChange={(e) => {setUserPwd(e.target.value);}}
                     value={userPwd}
-                    placeholder="Password" />
-                    <ForgetPassLink>비밀번호 찾기</ForgetPassLink>
+                    placeholder="비밀번호" />
+                    <ForgetPassLink onClick={openFPModal}>비밀번호 찾기</ForgetPassLink>
                 </PasswordField>
                 <LoginSubmitBtn type="submit" value="로그인" />
                 <SignUpBtn to="/signup">회원가입</SignUpBtn>
             </LoginForm>
-            <KakaoLogin src={kakaoLoginImg} />
+            <KakaoLogin src={kakaoLoginImg} onClick={kakaoLoginPage} />
+            <FPPopup
+                popupOn={FPpopupOn}
+                onClose={setFPPopupOn}
+            />
+            <CPPopup
+                popupOn={CPpopupOn}
+                onClose={setCPPopupOn}
+            />
         </Container>
     );
 }
