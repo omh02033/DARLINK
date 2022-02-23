@@ -30,3 +30,7 @@ body {
   padding: 0;
   background: #fef4ed;
 }
+input {
+  outline: none;
+  border: none;
+}

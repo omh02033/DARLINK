@@ -33,19 +33,9 @@ router
 
     const [userInfo]: Array<DBUser> = await knex('users').where({ userId: kakaoEmail });
 
-    token = await jwt.sign({
-      uid: userInfo.uid,
-      userId: userInfo.userId,
-      name: userInfo.name,
-      signUpPath: userInfo.signUpPath
-    }, CONF.jwt.key as string, CONF.jwt.options);
+    token = await setToken(userInfo);
   } else {
-    token = await jwt.sign({
-      uid: user.uid,
-      userId: user.userId,
-      name: user.name,
-      signUpPath: user.signUpPath
-    }, CONF.jwt.key as string, CONF.jwt.options);
+    token = await setToken(user);
   }
   return res.redirect(CONF.baseURL + `/setToken?token=${token}`);
 })
@@ -59,14 +49,14 @@ router
   
   if(JSON.parse(user.forgetPwdStatus)) {
     if(crypto.createHash('sha512').update(upw).digest('hex') === user.temporaryPassword) {
-      const token = await setToken(uid, user);
+      const token = await setToken(user);
       return res.status(200).json({ success: true, token, temporary: true });
     }
   }
 
   const hashPassword = crypto.createHash('sha512').update(upw + user.passwordSalt).digest('hex');
   if(user.password === hashPassword) {
-    const token = await setToken(uid, user);
+    const token = await setToken(user);
     return res.status(200).json({ success: true, token, temporary: false });
   } else return res.status(400).json({ success: false, message: "이메일 또는 비밀번호가 일치하지 않아요." });
 })
@@ -95,12 +85,7 @@ router
       password: hashPassword
     });
   
-    const token = await jwt.sign({
-      uid: user.uid,
-      userId: user.userId,
-      name: user.name,
-      signUpPath: user.signUpPath
-    }, CONF.jwt.key as string, CONF.jwt.options);
+    const token = await setToken(user);
   
     res.status(200).json({ success: true, token });
   } else return res.status(400).json({ success: false, message: "이미 회원가입 된 이메일이에요." });
@@ -185,17 +170,17 @@ router
 
 export default router;
 
-async function setToken(uid: string, user: DBUser) {
+async function setToken(user: DBUser) {
   const [admin]: Array<DBAdmin> = await knex('admin').where({ userUid: user.uid });
-  let isAdmin: boolean = false;
-  if(!admin) isAdmin = false;
-  else isAdmin = true;
+  let manager: boolean = false;
+  if(!admin) manager = false;
+  else manager = true;
   const token = await jwt.sign({
     uid: user.uid,
     userId: user.userId,
     name: user.name,
     signUpPath: user.signUpPath,
-    isAdmin
+    manager
   }, CONF.jwt.key as string, CONF.jwt.options);
 
   return token;

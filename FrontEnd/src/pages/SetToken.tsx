@@ -4,19 +4,19 @@ import { setCookie } from 'api';
 import queryString from 'query-string';
 
 const SetToken: React.FC = () => {
-    const { search } = useLocation();
+  const { search } = useLocation();
 
-    useEffect(() => {
-        const { token } = queryString.parse(search);
-        setCookie('token', token as string);
-        window.close();
-    }, []);
+  useEffect(() => {
+    const { token } = queryString.parse(search);
+    setCookie('token', token as string);
+    window.close();
+  }, []);
 
-    return (
-        <div>
-            <span>로그인 중..</span>
-        </div>
-    );
+  return (
+    <div>
+      <span>로그인 중..</span>
+    </div>
+  );
 }
 
 export default SetToken;
