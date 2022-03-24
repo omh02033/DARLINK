@@ -1,8 +1,14 @@
 import React from 'react';
+import styled from '@emotion/styled';
+import Select from 'react-select';
+
+const Container = styled.div`
+  width: 100%;
+`;
 
 const DeliExperience: React.FC = () => {
   return (
-    <div>배송 체험 페이지  (개발 중..)</div>
+    <Container></Container>
   );
 }
 export default DeliExperience;

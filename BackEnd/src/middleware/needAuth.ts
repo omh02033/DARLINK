@@ -3,6 +3,7 @@ import jwt, { JwtPayload, VerifyErrors } from 'jsonwebtoken';
 import { tokenInterface } from '../interfaces';
 import CONF from '../config';
 
+// 로그인 중이어야 하는 라우터를 이용해야 할 때 호출함   ex) 출석체크, 배송체험, 직접체험 등등
 // eslint-disable-next-line no-undef
 export default (req: Request, res: Response, next: NextFunction) => {
   const token = req.headers.authorization || undefined;

@@ -11,6 +11,6 @@ const knexConfig: Knex.Config = {
     database: config.db.database,
     dateStrings: true
   },
-};
+};  // 데이터베이스 연결
 
 export default knex(knexConfig);

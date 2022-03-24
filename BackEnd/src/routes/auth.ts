@@ -13,60 +13,63 @@ const router = Router();
 
 
 router
-.get('/login/kakao', passport.authenticate('kakao'))
+.get('/login/kakao', passport.authenticate('kakao'))  // 카카오톡 로그인 연동
 .get('/kakao/oauth', passport.authenticate('kakao', { session: false }), async (req: any, res: Response) => {
-  const kakaoEmail = req.user._json.kakao_account.email;
-  const name = req.user._json.kakao_account.profile.nickname;
-  const [user]: Array<DBUser> = await knex('users').where({ userId: kakaoEmail });
+  const kakaoEmail = req.user._json.kakao_account.email;  // 카카오톡 이메일 불러오기
+  const name = req.user._json.kakao_account.profile.nickname;  // 카카오톡 이름 불러오기
+  const [user]: Array<DBUser> = await knex('users').where({ userId: kakaoEmail });  // 데이터베이스에 등록 된 카카오톡 이메일 검색
   
   let token;
-  if(!user) {
-    await knex('users').insert({
+  if(!user) {  // 서비스에 등록되지 않았을 때, 즉 처음으로 카카오톡 로그인 시도할 때
+    await knex('users').insert({  // 데이터베이스에 추가  (회원가입)
       userId: kakaoEmail,
       name,
-      signUpPath: 'kakao'
+      signUpPath: 'kakao'  // 가입 경로 : kakao
     })
     .catch(err => {
       console.log(err);
       return res.status(500).json({ success: false, message: "에러가 발생했어요." });
     });
 
-    const [userInfo]: Array<DBUser> = await knex('users').where({ userId: kakaoEmail });
+    const [userInfo]: Array<DBUser> = await knex('users').where({ userId: kakaoEmail });  // 다시 정보 불러오기
 
-    token = await setToken(userInfo);
+    token = await setToken(userInfo);  // 로그인 토큰 생성
   } else {
-    token = await setToken(user);
+    token = await setToken(user);  // 로그인 토큰 생성
   }
   return res.redirect(CONF.baseURL + `/setToken?token=${token}`);
 })
 
+// 달링 자체 로그인 기능 이용할 때
 .post('/login', async (req: Request, res: Response) => {
   const { uid, upw } = req.body;
   if(!uid || !upw) return res.status(400).json({ success: false, message: "필드를 확인해주세요." });
 
   const [user]: Array<DBUser> = await knex('users').where({ userId: uid });
   if(!user) return res.status(400).json({ success: false, message: "이메일 또는 비밀번호가 일치하지 않아요." });
+  // 가입경로가 달링이 아닐 때, 즉 등록 방식이 카카오 이거나, 회원이 존재하지 않을 때
   if(user.signUpPath !== 'darlink') return res.status(400).json({ success: false, message: "이메일 또는 비밀번호가 일치하지 않아요." });
   
-  if(JSON.parse(user.forgetPwdStatus)) {
-    if(crypto.createHash('sha512').update(upw).digest('hex') === user.temporaryPassword) {
-      const token = await setToken(user);
+  if(JSON.parse(user.forgetPwdStatus)) {  // 임시 비밀번호가 활성화 되어있는 상태일 때
+    if(crypto.createHash('sha512').update(upw).digest('hex') === user.temporaryPassword) {  // 입력한 비밀번호가 임시비밀번호와 일치 할 때
+      const token = await setToken(user);  // 로그인 토큰 생성
       return res.status(200).json({ success: true, token, temporary: true });
     }
   }
 
   const hashPassword = crypto.createHash('sha512').update(upw + user.passwordSalt).digest('hex');
-  if(user.password === hashPassword) {
-    const token = await setToken(user);
+  if(user.password === hashPassword) {  // 비밀번호가 일치할 때
+    const token = await setToken(user);  // 로그인 토큰 생성
     return res.status(200).json({ success: true, token, temporary: false });
   } else return res.status(400).json({ success: false, message: "이메일 또는 비밀번호가 일치하지 않아요." });
 })
+// 달링 자체 회원가입
 .post('/signup', async (req: Request, res: Response) => {
   const { email, name, password } = req.body;
-  const [userInfo]: Array<DBUser> = await knex('users').where({ userId: email });
+  const [userInfo]: Array<DBUser> = await knex('users').where({ userId: email });  // 데이터베이스에 등록 된 계정정보 불러오기
   if(!userInfo) {
     const passwordSalt = Math.random().toString(16).slice(2) + Math.random().toString(36).slice(2);
-    const hashPassword = crypto.createHash('sha512').update(password + passwordSalt).digest('hex');
+    const hashPassword = crypto.createHash('sha512').update(password + passwordSalt).digest('hex');  // 비밀번호 암호화
   
     await knex('users').insert({
       userId: email,
@@ -84,22 +87,24 @@ router
     const [user]: Array<DBUser> = await knex('users').where({
       userId: email,
       password: hashPassword
-    });
+    });  // 정보 다시 불러오기
   
-    const token = await setToken(user);
+    const token = await setToken(user);  // 로그인 토큰 생성
   
     res.status(200).json({ success: true, token });
-  } else return res.status(400).json({ success: false, message: "이미 회원가입 된 이메일이에요." });
+  } else return res.status(400).json({ success: false, message: "이미 회원가입 된 이메일이에요." });  // 이미 등록된 계정일 때
 })
 
+// 비밀번호 잊음 기능을 이용할 때
 .post('/forgetPwd', async (req: Request, res: Response) => {
   const { email } = req.body;
 
   const [user]: Array<DBUser> = await knex('users').where({ userId: email });
   if(!user) return res.status(200).json({ success: false, message: "회원가입 되지 않은 이메일이에요." });
+  // 가입경로가 달링이 아닐 때
   if(user.signUpPath !== 'darlink') return res.status(200).json({ success: false, message: "달링 회원유저만 비밀번호 찾기 서비스를 이용할 수 있어요." });
 
-  const randomPwd = Math.random().toString(36).slice(2);
+  const randomPwd = Math.random().toString(36).slice(2);  // 랜덤으로 임시비밀번호 생성
   await knex('users').update({
     forgetPwdStatus: "true",
     temporaryPassword: crypto.createHash('sha512').update(randomPwd).digest('hex')
@@ -108,9 +113,9 @@ router
   }).catch(err => {
     console.log(err);
     return res.status(500).json({ success: false, message: "에러가 발생했어요." });
-  });
+  });  // 임시비밀번호 등록
 
-  await mail.sendMail({
+  await mail.sendMail({   // 임시비밀번호 이메일 발송
     from: `DARLINK Team`,
     to: email,
     subject: "[DARLINK] 임시 비밀번호 전송",

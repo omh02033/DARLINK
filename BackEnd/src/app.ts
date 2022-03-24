@@ -7,6 +7,7 @@ import path from 'path';
 
 const app = express();
 
+// 기초 미들웨어 설정
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(logger("dev"));
