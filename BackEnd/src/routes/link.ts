@@ -27,7 +27,7 @@ const router = Router();
 
 router
 .post('/', imgUpload.single('file'), async (req: Request, res: Response) => {
-  const { url, fileWhether, imgUrl, field } = req.body;
+  const { url, fileWhether, imgUrl, location, field, isDeli, isDirect } = req.body;
 
   const [links]: Array<DBLinks> = await knex('links').where({ url });
   if(links) return res.status(400).json({ success: false, message: '이미 등록하시려는 링크가 존재합니다.' });
@@ -37,12 +37,16 @@ router
     datas = {
       url,
       image: req.file?.path.substring(req.file.path.indexOf('uploads')+'uploads'.length, req.file.path.length),
-      tag: field
+      ...(JSON.parse(isDirect) && {location, field: 'direct'}),
+      ...(JSON.parse(isDeli) && {field: 'delivery'}),
+      tag: field,
     }
   else
     datas = {
       url,
       image: imgUrl,
+      ...(JSON.parse(isDirect) && {location, field: 'direct'}),
+      ...(JSON.parse(isDeli) && {field: 'delivery'}),
       tag: field
     }
 

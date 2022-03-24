@@ -14,7 +14,7 @@ const Container = styled.div`
 
 const AddForm = styled.form`
   width: 50%;
-  height: 80%;
+  height: 100%;
   display: flex;
   justify-content: space-evenly;
   align-items: center;
@@ -107,14 +107,37 @@ const Manage: React.FC = () => {
   const [fileWhether, setFileWhether] = useState<boolean>(false);
   const [imgUrl, setImgUrl] = useState<string>("");
   const [imgFile, setImgFile] = useState<File>();
+  const [location, setLocation] = useState<string>("seoul");
   const [field, setField] = useState<string>("food");
+  
+  const [isDeli, setIsDeli] = useState<boolean>(true);
+  const [isDirect, setIsDirect] = useState<boolean>(false);
 
   const fieldOptions = [
+    {value: 'delivery', label: '배송체험'},
+    {value: 'direct', label: '직접체험'}
+  ];
+
+  const deliFieldOptions = [
     {value: 'food', label: '음식'},
     {value: 'etc', label: '기타제품'},
     {value: 'reporters', label: '기자단'},
     {value: 'beauty', label: '뷰티'}
-  ]
+  ];
+
+  const directLocationOptions = [
+    {value: 'seoul', label: '서울'},
+    {value: 'gyeonggi', label: '경기도'},
+    {value: 'junla', label: '전라도'},
+    {value: 'gangwon', label: '강원도'},
+    {value: 'gyeongsang', label: '경상도'}
+  ];
+  const directFieldOptions = [
+    {value: 'food', label: '음식점'},
+    {value: 'sports', label: '스포츠'},
+    {value: 'caffee', label: '카페'},
+    {value: 'etc', label: '기타'}
+  ];
 
   const AddSubmit = (e: any) => {
     e.preventDefault();
@@ -127,7 +150,10 @@ const Manage: React.FC = () => {
     frm.append('fileWhether', JSON.stringify(fileWhether));
     if(fileWhether) frm.append('file', imgFile as File);
     else frm.append('imgUrl', imgUrl);
+    frm.append('location', location);
     frm.append('field', field);
+    frm.append('isDeli', JSON.stringify(isDeli));
+    frm.append('isDirect', JSON.stringify(isDirect));
 
     api.post('/link', frm, {
       headers: {
@@ -146,9 +172,25 @@ const Manage: React.FC = () => {
     setImgFile(e.target.files[0]);
   }
 
+  const changeField = (e: any) => {
+    if(e.value === 'delivery') {
+      setIsDeli(true);
+      setIsDirect(false);
+    } else {
+      setIsDeli(false);
+      setIsDirect(true);
+    }
+  }
+
   return (
     <Container>
       <AddForm onSubmit={AddSubmit}>
+        <FieldSelector
+        options={fieldOptions}
+        isSearchable={false}
+        defaultValue={fieldOptions[0]}
+        onChange={changeField}
+        />
         <Field
         type="url"
         placeholder='url'
@@ -180,10 +222,18 @@ const Manage: React.FC = () => {
             />
           )}
         </ImgBox>
+        {isDirect && (
+          <FieldSelector
+          options={directLocationOptions}
+          isSearchable={false}
+          defaultValue={directLocationOptions[0]}
+          onChange={(e: any) => {setLocation(e.value);}}
+          />
+        )}
         <FieldSelector
-        options={fieldOptions}
+        options={isDeli ? deliFieldOptions : directFieldOptions}
         isSearchable={false}
-        defaultValue={fieldOptions[0]}
+        defaultValue={isDeli ? deliFieldOptions[0] : directFieldOptions[0]}
         onChange={(e: any) => {setField(e.value);}} />
         <SubmitBtn
         type="submit"

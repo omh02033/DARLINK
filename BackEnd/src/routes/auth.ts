@@ -46,6 +46,7 @@ router
 
   const [user]: Array<DBUser> = await knex('users').where({ userId: uid });
   if(!user) return res.status(400).json({ success: false, message: "이메일 또는 비밀번호가 일치하지 않아요." });
+  if(user.signUpPath !== 'darlink') return res.status(400).json({ success: false, message: "이메일 또는 비밀번호가 일치하지 않아요." });
   
   if(JSON.parse(user.forgetPwdStatus)) {
     if(crypto.createHash('sha512').update(upw).digest('hex') === user.temporaryPassword) {
