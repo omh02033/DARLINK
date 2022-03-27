@@ -7,6 +7,7 @@ export interface User {
   signUpPath: string;
   name: string;
   manager: boolean;
+  likes: number[];
 }
 
 const useProvideAuth = () => {

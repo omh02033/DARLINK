@@ -146,37 +146,62 @@ router
   res.status(200).json({ success: true });
 })
 
+// 현재 로그인 상태인지 확인
 .get('/isLogin', async (req: Request, res: Response) => {
-  const token = req.headers.authorization;
-  if (!token) return res.status(200).json({
-    login: false,
-    data: null,
-    message: "로그인 상태가 아니에요."
-  });
-  let decoded: tokenInterface | jwt.JwtPayload | string = jwt.verify(token, CONF.jwt.key as string);
-  if (!decoded) return res.status(200).json({
-    login: false,
-    data: null,
-    message: "토큰을 해독하는데 실패했어요."
-  });
-  const [data]: Array<DBUser> = await knex('users').where({
-    uid: (decoded as tokenInterface).uid,
-    userId: (decoded as tokenInterface).userId
-  });
-  if (!data) return res.status(200).json({
-    login: false,
-    data: null,
-    message: "유저 정보를 불러오는데 실패했어요."
-  });
-  return res.status(200).json({
-    login: true,
-    data: decoded
-  });
+  try {
+    const token = req.headers.authorization;
+    if (!token) return res.status(200).json({
+      login: false,
+      data: null,
+      message: "로그인 상태가 아니에요."
+    });
+    let decoded: tokenInterface | jwt.JwtPayload | string = await jwt.verify(token, CONF.jwt.key as string);
+    if (!decoded) return res.status(200).json({
+      login: false,
+      data: null,
+      message: "토큰을 해독하는데 실패했어요."
+    });
+    const [data]: Array<DBUser> = await knex('users')
+    .where({
+      uid: (decoded as tokenInterface).uid,
+      userId: (decoded as tokenInterface).userId
+    });
+    if (!data) return res.status(200).json({
+      login: false,
+      data: null,
+      message: "유저 정보를 불러오는데 실패했어요."
+    });
+    return res.status(200).json({
+      login: true,
+      data: decoded
+    });
+  } catch (error: any) {
+    if(error.name === 'TokenExpiredError') {
+      return res.status(200).json({
+        login: false,
+        data: null,
+        message: "토큰이 만료되었습니다."
+      });
+    } else if(['jwt malformed', 'invalid signature'].includes(error.message)) {
+      return res.status(200).json({
+        login: false,
+        data: null,
+        message: "토큰이 변조되었습니다."
+      });
+    } else {
+      console.log(error);
+      return res.status(200).json({
+        login: false,
+        data:null,
+        message: "토큰에 문제가 있습니다."
+      });
+    }
+  }
 })
 
 export default router;
 
-async function setToken(user: DBUser) {
+async function setToken(user: DBUser) {   // 로그인 토큰 생성 함수
   const [admin]: Array<DBAdmin> = await knex('admin').where({ userUid: user.uid });
   let manager: boolean = false;
   if(!admin) manager = false;

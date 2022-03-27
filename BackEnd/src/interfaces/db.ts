@@ -22,3 +22,9 @@ export interface DBLinks {
   tag: 'food' | 'etc' | 'reporters' | 'beauty';
   linkNum: number;
 }
+
+export interface DBLikes {
+  uid: number;
+  userUid: number;
+  likeUid: number;
+}

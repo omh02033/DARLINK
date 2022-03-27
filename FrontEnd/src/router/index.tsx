@@ -11,6 +11,7 @@ import PrivateRouter from './privateRouter';
 import PublicRouter from './publicRouter';
 
 import 'react-toastify/dist/ReactToastify.css';
+import { removeCookie } from 'api';
 
 const Container = styled.div`
   width: 100vw;
@@ -120,6 +121,14 @@ const Boundary = styled.div<{main: boolean}>`
   opacity: ${({main}) => main ? 0 : 1};
   transition: all 0.2s ease;
 `;
+const LogoutSpan = styled.span`
+  cursor: pointer;
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font: 1em Sandoll Gothic L;
+  border-bottom: 1px solid #000;
+`;
 
 const App: React.FC = () => {
   const auth = useAuth();
@@ -132,11 +141,19 @@ const App: React.FC = () => {
   const deliActiveField = ["/deliExperience"];
   const manageActiveField = ["/manage"];
 
+  const Logout = () => {
+    removeCookie('token');
+    window.location.replace('/');
+  }
+
   return (
     <Suspense fallback={<Loading show />}>
-      <Loading show={auth?.user === undefined}/>
+      <Loading show={auth.user === undefined}/>
       <ToastContainer/>
       <Container>
+        {auth.user && (
+          <LogoutSpan onClick={Logout}>로그아웃</LogoutSpan>
+        )}
         <TopLogo>
           <LogoBox to='/'>
             <LinkImg src={linkLogo} />
@@ -146,26 +163,26 @@ const App: React.FC = () => {
         <MenuContainer main={isMain}>
           <MenuBtn
           to='/deliExperience'
-          className={deliActiveField.indexOf(location.pathname) !== -1 ? 'active' : ''}>
+          className={deliActiveField.includes(location.pathname) ? 'active' : ''}>
             <MenuDelivery />
             <MenuTitle main={isMain}>배송 체험</MenuTitle>
           </MenuBtn>
           <MenuBtn
           to='/directExperience'
-          className={directActiveField.indexOf(location.pathname) !== -1 ? 'active' : ''}>
+          className={directActiveField.includes(location.pathname) ? 'active' : ''}>
             <MenuExperience />
             <MenuTitle main={isMain}>직접 체험</MenuTitle>
           </MenuBtn>
           <MenuBtn
-          to={auth?.user ? '/myPage' : '/login'}
-          className={myPageActiveField.indexOf(location.pathname) !== -1 ? 'active' : ''}>
+          to={auth.user ? '/myPage' : '/login'}
+          className={myPageActiveField.includes(location.pathname) ? 'active' : ''}>
             <MenuMyPage />
             <MenuTitle main={isMain}>마이페이지</MenuTitle>
           </MenuBtn>
-          {auth?.user?.manager && (
+          {auth.user?.manager && (
             <MenuBtn
             to='/manage'
-            className={manageActiveField.indexOf(location.pathname) !== -1 ? 'active' : ''}>
+            className={manageActiveField.includes(location.pathname) ? 'active' : ''}>
               <MenuAdmin />
               <MenuTitle main={isMain}>관리</MenuTitle>
             </MenuBtn>
@@ -173,8 +190,8 @@ const App: React.FC = () => {
         </MenuContainer>
         <Boundary main={isMain} />
         <PageBox main={isMain}>
-          {auth?.user && <PrivateRouter />}
-          {auth?.user === null && <PublicRouter />}
+          {auth.user && <PrivateRouter />}
+          {auth.user === null && <PublicRouter />}
         </PageBox>
       </Container>
     </Suspense>

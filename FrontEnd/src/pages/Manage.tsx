@@ -109,6 +109,7 @@ const Manage: React.FC = () => {
   const [imgFile, setImgFile] = useState<File>();
   const [location, setLocation] = useState<string>("seoul");
   const [field, setField] = useState<string>("food");
+  const [title, setTitle] = useState<string>("");
   
   const [isDeli, setIsDeli] = useState<boolean>(true);
   const [isDirect, setIsDirect] = useState<boolean>(false);
@@ -154,8 +155,9 @@ const Manage: React.FC = () => {
     frm.append('field', field);
     frm.append('isDeli', JSON.stringify(isDeli));
     frm.append('isDirect', JSON.stringify(isDirect));
+    frm.append('title', title);
 
-    api.post('/link', frm, {
+    api.post('/manage/link', frm, {
       headers: {
         'Content-Type': 'multipart/form-data; ',
       }
@@ -190,6 +192,12 @@ const Manage: React.FC = () => {
         isSearchable={false}
         defaultValue={fieldOptions[0]}
         onChange={changeField}
+        />
+        <Field
+        type="text"
+        placeholder='제목'
+        onChange={({ target: {value} }) => {setTitle(value);}}
+        value={title}
         />
         <Field
         type="url"

@@ -25,6 +25,17 @@ CREATE TABLE IF NOT EXISTS `admin` (
   CONSTRAINT `FK1_USER_UID` FOREIGN KEY (`user_uid`) REFERENCES `users` (`uid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE IF NOT EXISTS `likes` (
+  `uid` int(11) NOT NULL AUTO_INCREMENT,
+  `userUid` int(11) NOT NULL,
+  `linkUid` int(11) NOT NULL,
+  PRIMARY KEY (`uid`),
+  KEY `FK1_USER_UID2` (`userUid`),
+  CONSTRAINT `FK1_USER_UID2` FOREIGN KEY (`userUid`) REFERENCES `users` (`uid`),
+  KEY `FK2_LINK_UID` (`linkUid`),
+  CONSTRAINT `FK2_LINK_UID` FOREIGN KEY (`linkUid`) REFERENCES `links` (`uid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- 내보낼 데이터가 선택되어 있지 않습니다.
 
 -- 테이블 darlink.attendance 구조 내보내기

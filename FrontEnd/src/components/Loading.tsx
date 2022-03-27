@@ -1,6 +1,6 @@
 import React from 'react';
 import { Transition } from 'react-transition-group';
-import { TransitionStatus } from 'react-transition-group';
+import type { TransitionStatus } from 'react-transition-group';
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/react';
 
