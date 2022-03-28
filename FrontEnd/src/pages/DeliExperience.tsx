@@ -23,7 +23,7 @@ const SelectorBox = styled.div`
 const CardColumn = styled.div`
   width: 100%;
   display: flex;
-  justify-content: space-around;
+  justify-content: space-evenly;
 `;
 
 const DeliExperience: React.FC = () => {
@@ -94,7 +94,7 @@ const DeliExperience: React.FC = () => {
           setOptions={setField}
           constValue={['food', 'etc', 'reporters', 'beauty']}
           name={names}
-          title={field.length === 4 ? '전체' : field.map((v: string) => { return `${names[v]} `; }).join(',')}
+          title={field.length === 4 ? '전체' : field.map((v: string) => { return `${names[v]}`; }).join(',')}
         />
       </SelectorBox>
 
@@ -113,7 +113,7 @@ const DeliExperience: React.FC = () => {
               )
             })}
           </CardColumn>
-        );
+        )
       })
     }
     </Container>

@@ -2,13 +2,18 @@ import React from 'react';
 import styled from '@emotion/styled';
 
 const Container = styled.div`
-  background: #fef4ed;
+  background: #ffffff;
+  width: 50%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const Main: React.FC = () => {
   return (
     <Container>
-      <div>메인페이지  (개발 중..)</div>
+      <span>BANNER</span>
     </Container>
   );
 }

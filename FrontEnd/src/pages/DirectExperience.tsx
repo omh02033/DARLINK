@@ -24,7 +24,7 @@ const SelectorBox = styled.div`
 const CardColumn = styled.div`
   width: 100%;
   display: flex;
-  justify-content: space-around;
+  justify-content: space-evenly;
   margin-bottom: 20px;
 `;
 
@@ -105,14 +105,14 @@ const DirectExperience: React.FC = () => {
           setOptions={setLocation}
           constValue={['seoul', 'gyeonggi', 'junla', 'gangwon', 'gyeongsang']}
           name={directLocationOptions}
-          title={location.length === 5 ? '전체' : location.map((v: string) => { return `${directLocationOptions[v]} `; }).join(',')}
+          title={location.length === 5 ? '전체' : location.map((v: string) => { return `${directLocationOptions[v]}`; }).join(',')}
         />
         <MultipleSelector
           options={tag}
           setOptions={setTag}
           constValue={['food', 'sports', 'caffee', 'etc']}
           name={directTagOptions}
-          title={tag.length === 4 ? '전체' : tag.map((v: string) => { return `${directTagOptions[v]} `; }).join(',')}
+          title={tag.length === 4 ? '전체' : tag.map((v: string) => { return `${directTagOptions[v]}`; }).join(',')}
         />
       </SelectorBox>
 
