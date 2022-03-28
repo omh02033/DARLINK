@@ -9,7 +9,7 @@ import needPermision from '../middleware/needPermision';
 
 export default (app: Express): void => {
   app.use('/auth', authRouter);
+  app.use('/link', linkRouter);
   app.use('/user', needAuth, userRouter);
-  app.use('/link', needAuth, linkRouter);
   app.use('/manage', needAuth, needPermision, ManageRouter);
 }

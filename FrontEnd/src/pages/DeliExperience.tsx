@@ -5,16 +5,19 @@ import { api } from 'api';
 import type { linkIF, likesIF } from 'interfaces/link';
 import Card from 'components/Card';
 import useAuth from 'hook/auth';
+import { useBottomScrollListener } from 'react-bottom-scroll-listener';
 
 const Container = styled.div`
   width: 100%;
   position: relative;
 `;
 
-const Selector = styled(MultipleSelector)`
+const SelectorBox = styled.div`
   position: absolute;
-  top: 0;
+  top: -60px;
   right: 60px;
+  display: flex;
+  justify-content: space-between;
 `;
 
 const CardColumn = styled.div`
@@ -26,6 +29,7 @@ const CardColumn = styled.div`
 const DeliExperience: React.FC = () => {
   const isLogin = useAuth();
   const [field, setField] = useState<string[]>(['food', 'etc', 'reporters', 'beauty']);
+  const [page, setPage] = useState<number>(0);
 
   const names: any = {
     food: '음식',
@@ -39,14 +43,16 @@ const DeliExperience: React.FC = () => {
   const [myLikes, setMyLikes] = useState<number[]>([]);
 
   useEffect(() => {
-    api.get('/link/likes')
-    .then(data => {
-      const likes: number[] = [];
-      data.data.links.forEach((v: number) => {
-        likes.push(v);
+    if(isLogin.user) {
+      api.get('/link/likes')
+      .then(data => {
+        const likes: number[] = [];
+        data.data.likes.forEach((v: likesIF) => {
+          likes.push(v.linkUid);
+        });
+        setMyLikes(likes);
       });
-      setMyLikes(likes);
-    })
+    }
   }, []);
 
   useEffect(() => {
@@ -58,7 +64,7 @@ const DeliExperience: React.FC = () => {
 
   useEffect(() => {
     const process: [linkIF[]] = [[]];
-    process.slice(0,1);
+    process.shift();
     for(let i=0; i<links.length; i+=3) {
       const inProcess = [];
       inProcess.push(links[i], links[i+1], links[i+2]);
@@ -67,15 +73,30 @@ const DeliExperience: React.FC = () => {
     setProcessLink(process);
   }, [links]);
 
+  useBottomScrollListener(() => {
+    api.post('/link/delivery', {tag: field, page: page+1})
+    .then(data => {
+      setPage(prev => { return prev+1 });
+      setLinks(prev => {
+        return [
+          ...prev,
+          ...data.data.links
+        ];
+      });
+    });
+  });
+
   return (
     <Container>
-      <Selector
-        options={field}
-        setOptions={setField}
-        constValue={['food', 'etc', 'reporters', 'beauty']}
-        name={names}
-        title={field.length === 4 ? '전체' : field.map((v: string) => { return `${names[v]} `; }).join(',')}
-      />
+      <SelectorBox>
+        <MultipleSelector
+          options={field}
+          setOptions={setField}
+          constValue={['food', 'etc', 'reporters', 'beauty']}
+          name={names}
+          title={field.length === 4 ? '전체' : field.map((v: string) => { return `${names[v]} `; }).join(',')}
+        />
+      </SelectorBox>
 
       {processLink?.map((data, idx) => {
         return (
@@ -84,7 +105,8 @@ const DeliExperience: React.FC = () => {
               return (
                 <Card
                   isLogin={isLogin.user ? true : false}
-                  isLike={myLikes.includes(link.uid)}
+                  isLike={myLikes}
+                  setIsLike={setMyLikes}
                   link={link}
                   key={idx+i}
                 />

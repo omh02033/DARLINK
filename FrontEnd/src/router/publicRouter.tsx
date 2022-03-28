@@ -1,5 +1,7 @@
 import { Navigate, Routes, Route } from "react-router-dom";
 import {
+  DeliExperience,
+  DirectExperience,
   Login,
   Main,
   SetToken,
@@ -15,6 +17,8 @@ export default () => {
       <Route path='/login' element={<Login />} />
       <Route path='/signup' element={<SignUp />} />
       <Route path='/setToken' element={<SetToken />} />
+      <Route path='/deliExperience' element={<DeliExperience />} />
+      <Route path='/directExperience' element={<DirectExperience />} />
       <Route path='*' element={<Navigate to='/login' />} />  {/* 위의 아무 경로도 아닐 때 로그인페이지로 이동 */}
     </Routes>
   );

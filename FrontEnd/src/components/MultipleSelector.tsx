@@ -2,11 +2,6 @@ import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import { BsFillCaretDownFill } from 'react-icons/bs';
 
-const Container = styled.div`
-  position: absolute;
-  top: -60px;
-  right: 60px;
-`;
 const SelectContainer = styled.div`
   width: 200px;
   height: 30px;
@@ -44,6 +39,12 @@ const SelectBtn = styled.div`
   top: 0;
   left: 0;
   & > span {
+    display: block;
+    width: 80%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
     font: 16px/65px Sandoll Gothic M;
     line-height: 100%;
   }
@@ -120,28 +121,26 @@ const MultipleSelector = (props: MSIF) => {
   }
 
   return (
-    <Container>
-      <SelectContainer>
-          <SelectBtn onClick={(e) => {activeTarget(showField, setShowF);}}>
-              <span>{props.title}</span>
-              <ToggleIcon isFocus={showField} />
-          </SelectBtn>
-          <TargetSelector className={showField ? 'active' : ''}>
-              <SelectBox className="all" onClick={() => {allChange();}}>
-                  <div>전체 선택</div>
-                  <input type="checkbox" checked={props.options.length === props.constValue.length ? true : false} />
-              </SelectBox>
-              {props.constValue.map((data: string) => {
-                  return (
-                      <SelectBox onClick={() => {setData(data, props.options, props.setOptions);}} key={data+'f'}>
-                          <div>{props.name[data]}</div>
-                          <input type="checkbox" checked={props.options.includes(data) ? true : false} />
-                      </SelectBox>
-                  );
-              })}
-          </TargetSelector>
-      </SelectContainer>
-    </Container>
+    <SelectContainer>
+      <SelectBtn onClick={(e) => {activeTarget(showField, setShowF);}}>
+        <span>{props.title}</span>
+        <ToggleIcon isFocus={showField} />
+      </SelectBtn>
+      <TargetSelector className={showField ? 'active' : ''}>
+        <SelectBox className="all" onClick={() => {allChange();}}>
+          <div>전체 선택</div>
+          <input type="checkbox" checked={props.options.length === props.constValue.length ? true : false} />
+        </SelectBox>
+        {props.constValue.map((data: string) => {
+          return (
+            <SelectBox onClick={() => {setData(data, props.options, props.setOptions);}} key={data+'f'}>
+              <div>{props.name[data]}</div>
+              <input type="checkbox" checked={props.options.includes(data) ? true : false} />
+            </SelectBox>
+          );
+        })}
+      </TargetSelector>
+    </SelectContainer>
   )
 }
 

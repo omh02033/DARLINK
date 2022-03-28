@@ -3,12 +3,13 @@ export interface linkIF {
   url: string;
   image: string;
   tag: string;
-  likeNum: number;
   location: string;
   field: string;
   title: string;
 }
 
 export interface likesIF {
-  [key: number]: number;
+  uid: number;
+  linkUid: number;
+  userUid: number;
 }

@@ -1,9 +1,8 @@
-import { useState } from 'react';
 import styled from '@emotion/styled';
 import { BsHeartFill, BsHeart } from 'react-icons/bs';
 import { toast } from 'react-toastify';
 import { api } from 'api';
-import type { linkIF } from 'interfaces/link';
+import type { likesIF, linkIF } from 'interfaces/link';
 
 const Container = styled.div`
   width: 180px;
@@ -16,6 +15,10 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   background: #fff;
+  transition: all 0.3s ease;
+  &:hover {
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  }
 `;
 
 const ImageBox = styled.div`
@@ -62,24 +65,31 @@ const FillHeart = styled(BsHeartFill)`
 interface cardIF {
   link: linkIF;
   isLogin: boolean;
-  isLike: boolean;
+  isLike: number[];
+  setIsLike: React.Dispatch<React.SetStateAction<number[]>>;
 }
 
 const Card = (props: cardIF) => {
-  const [isLike, setIsLike] = useState<boolean>(props.isLike);
 
   const like = () => {
-    if(props.isLogin) {
+    if(!props.isLogin) {
       toast.warning("로그인이 필요한 서비스입니다.");
-      window.location.replace('/login');
+      setTimeout(() => {
+        window.location.replace('/login');
+      }, 1000);
     } else {
       api.post('/link/like', {
-        like: isLike ? false : true,
+        like: props.isLike.includes(props.link.uid) ? false : true,
         uid: props.link.uid
       })
       .then(data => {
         if(data.data.success) {
-          setIsLike(isLike ? false : true);
+          const likes: number[] = [];
+          data.data.likes.forEach((v: likesIF) => {
+            likes.push(v.linkUid);
+          });
+          props.setIsLike(likes);
+          toast.success(data.data.message);
         }
       });
     }
@@ -91,14 +101,14 @@ const Card = (props: cardIF) => {
 
   return (
     props.link && (
-      <Container onClick={goLink}>
-        <ImageBox>
+      <Container>
+        <ImageBox onClick={goLink}>
           <Image src={`${props.link.image.substring(0, 1) === '/' ? process.env.REACT_APP_BACK_URL : ''}${props.link.image}`} />
         </ImageBox>
         <Bar>
           <Title>{props.link.title}</Title>
           {props.isLogin ? (
-            isLike ? (
+            props.isLike.includes(props.link.uid) ? (
               <FillHeart onClick={like} />
             ) : (
               <Heart onClick={like} />

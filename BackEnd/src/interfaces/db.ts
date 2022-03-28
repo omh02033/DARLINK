@@ -20,7 +20,9 @@ export interface DBLinks {
   url: string;
   image: string;
   tag: 'food' | 'etc' | 'reporters' | 'beauty';
-  linkNum: number;
+  field: string;
+  location: string;
+  title: string;
 }
 
 export interface DBLikes {
