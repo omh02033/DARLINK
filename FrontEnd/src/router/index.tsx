@@ -141,19 +141,11 @@ const App: React.FC = () => {
   const deliActiveField = ["/deliExperience"];
   const manageActiveField = ["/manage"];
 
-  const Logout = () => {
-    removeCookie('token');
-    window.location.replace('/');
-  }
-
   return (
     <Suspense fallback={<Loading show />}>
       <Loading show={auth.user === undefined}/>
       <ToastContainer/>
       <Container>
-        {auth.user && (
-          <LogoutSpan onClick={Logout}>로그아웃</LogoutSpan>
-        )}
         <TopLogo>
           <LogoBox to='/'>
             <LinkImg src={linkLogo} />

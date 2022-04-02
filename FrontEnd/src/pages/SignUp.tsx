@@ -5,7 +5,7 @@ import { api, setCookie } from 'api';
 import { toast } from 'react-toastify';
 
 const Container = styled.div`
-  width: 30%;
+  width: 40%;
   display: flex;
   justify-content: space-between;
   align-items: center;

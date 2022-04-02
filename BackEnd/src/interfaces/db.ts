@@ -28,5 +28,5 @@ export interface DBLinks {
 export interface DBLikes {
   uid: number;
   userUid: number;
-  likeUid: number;
+  linkUid: number;
 }

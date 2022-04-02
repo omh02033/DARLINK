@@ -2,6 +2,7 @@ import { useState } from 'react';
 import styled from '@emotion/styled';
 import { api } from 'api';
 import { toast } from 'react-toastify';
+import { BsXLg } from 'react-icons/bs';
 
 const Blinder = styled.div<{isOn: boolean}>`
   width: 100vw;
@@ -62,50 +63,83 @@ const PasswordSubmitBtn = styled.input`
   }
 `;
 
+const CloseBox = styled.div`
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 30px;
+  transition: all 0.3s ease;
+  &:hover {
+    background: #00000033;
+  }
+`;
+
 interface PropsIF {
   popupOn: boolean;
   onClose: Function;
 }
 
-const TemporaryChangePwd = ({popupOn, onClose}: PropsIF) => {
+const ChangePwd = ({popupOn, onClose}: PropsIF) => {
   const [password, setPassword] = useState<string>("");
+  const [changePassword, setChangePassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
 
   const sendPwd = (e: any) => {
     e.preventDefault();
-    if(!password || !confirmPassword) return;
+    if(!changePassword || !confirmPassword || !password) return;
 
-    if(password === confirmPassword) {
-      api.post('/user/changePwd/tem', { password })
+    if(changePassword === confirmPassword) {
+      api.post('/user/changePwd', { password, changePassword })
       .then(res => {
-        if(res.data.success) toast.success("비밀번호 변경에 성공했어요.");
-        onClose(false);
-        window.location.replace('/');
+        if(res.data.success) {
+          toast.success("비밀번호 변경에 성공했어요.");
+          onClose(false);
+          setTimeout(() => {
+            window.location.replace('/myPage');
+          }, 500);
+        }
       });
     } else return toast.warning("비밀번호를 확인해주세요.");
+  }
+
+  const closePopup = () => {
+    onClose(false);
   }
 
   return (
     <Blinder isOn={popupOn}>
       <Container isOn={popupOn}>
-        <Title>비밀번호를 변경하세요!!</Title>
+        <Title>비밀번호를 변경</Title>
         <PasswordForm onSubmit={sendPwd}>
             <PasswordField
             type="password"
             onChange={(e) => {setPassword(e.target.value);}}
             value={password}
-            placeholder="비밀번호" />
+            placeholder="기존 비밀번호" />
+            <PasswordField
+            type="password"
+            onChange={(e) => {setChangePassword(e.target.value);}}
+            value={changePassword}
+            placeholder="새로운 비밀번호" />
             <PasswordField
             type="password"
             onChange={(e) => {setConfirmPassword(e.target.value);}}
             value={confirmPassword}
-            placeholder="비밀번호 확인" />
+            placeholder="새로운 비밀번호 확인" />
 
             <PasswordSubmitBtn type="submit" value="비밀번호 변경" />
         </PasswordForm>
+        <CloseBox onClick={closePopup}>
+          <BsXLg/>
+        </CloseBox>
       </Container>
     </Blinder>
   );
 }
 
-export default TemporaryChangePwd;
+export default ChangePwd;
