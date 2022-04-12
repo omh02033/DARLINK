@@ -1,9 +1,10 @@
 import { Router, Request, Response } from 'express';
-import jwt from 'jsonwebtoken';
 import knex from '../config/db';
-import CONF from '../config';
 import crypto from 'crypto';
-import { DBLikes, DBLinks, DBUser } from '../interfaces';
+import { DBAttendance, DBLikes, DBLinks, DBUser } from '../interfaces';
+import moment from 'moment-timezone';
+
+moment.tz.setDefault('Asia/Seoul');
 
 const router = Router();
 
@@ -63,6 +64,39 @@ router
   .whereIn('uid', [...likes.map(data => { return data.linkUid })]);
 
   res.status(200).json({ links });
+})
+
+.get('/attendance', async (req: Request, res: Response) => {
+  const attendance: Array<DBAttendance> = await knex('attendance').where({ userUid: req.auth.uid });
+
+  res.status(200).json({
+    attendance: [
+      ...attendance.map(v => {return v.day})
+    ]
+  });
+})
+.post('/attendance', async (req: Request, res: Response) => {
+  const attendance: Array<DBAttendance> = await knex('attendance').where({ userUid: req.auth.uid });
+  const info = [...attendance.map(v => {return v.day})];
+
+  const today = moment().format('YYYY-MM-DD');
+
+  if(info.includes(today)) {
+    return res.status(400).json({ success: false, message: '이미 출석하였습니다.' });
+  } else {
+    await knex('attendance').insert({
+      userUid: req.auth.uid,
+      day: today
+    }).catch(err => {
+      console.log(err);
+      return res.status(500).json({ message: '출석체크 중 오류가 발생하였습니다.' });
+    });
+
+    return res.status(200).json({
+      success: true,
+      day: today
+    });
+  }
 })
 
 export default router;

@@ -30,3 +30,10 @@ export interface DBLikes {
   userUid: number;
   linkUid: number;
 }
+
+export interface DBAttendance {
+  uid: number;
+  userUid: number;
+  time: Date;
+  day: string;
+}

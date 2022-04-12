@@ -159,10 +159,10 @@ const FPPopup = ({popupOn, onClose}: PropsIF) => {
     setIsLoading(true);
 
     api.post('/auth/forgetPwd', { email })
-    .then(res => {
+    .then(({data}) => {
       setIsLoading(false);
-      if(res.data.success) toast.success("임시 비밀번호를 전송하였습니다.");
-      else return toast.warning(res.data.message);
+      if(data.success) toast.success("임시 비밀번호를 전송하였습니다.");
+      else return toast.warning(data.message);
       onClose(false);
     });
   }

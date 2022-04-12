@@ -95,8 +95,8 @@ const ChangePwd = ({popupOn, onClose}: PropsIF) => {
 
     if(changePassword === confirmPassword) {
       api.post('/user/changePwd', { password, changePassword })
-      .then(res => {
-        if(res.data.success) {
+      .then(({data}) => {
+        if(data.success) {
           toast.success("비밀번호 변경에 성공했어요.");
           onClose(false);
           setTimeout(() => {

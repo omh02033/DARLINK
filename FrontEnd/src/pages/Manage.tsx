@@ -162,11 +162,11 @@ const Manage: React.FC = () => {
         'Content-Type': 'multipart/form-data; ',
       }
     })
-    .then(res => {
-      if(res.data.success) {
+    .then(({data}) => {
+      if(data.success) {
         toast.success('링크 등록에 성공하였어요.');
         window.location.replace(window.location.href);
-      } else toast.error(res.data.message);
+      } else toast.error(data.message);
     });
   }
   const checkImgType = (e: any) => {

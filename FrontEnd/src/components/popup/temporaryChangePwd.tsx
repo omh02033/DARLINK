@@ -77,8 +77,8 @@ const TemporaryChangePwd = ({popupOn, onClose}: PropsIF) => {
 
     if(password === confirmPassword) {
       api.post('/user/changePwd/tem', { password })
-      .then(res => {
-        if(res.data.success) toast.success("비밀번호 변경에 성공했어요.");
+      .then(({data}) => {
+        if(data.success) toast.success("비밀번호 변경에 성공했어요.");
         onClose(false);
         window.location.replace('/');
       });

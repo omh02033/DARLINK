@@ -5,6 +5,13 @@ import Card from 'components/Card';
 import { likesIF, linkIF } from 'interfaces/link';
 import useAuth from 'hook/auth';
 import CPPopup from 'components/popup/changePasswd';
+import Calendar from 'react-calendar';
+import { toast } from 'react-toastify';
+import moment from 'moment-timezone';
+
+import 'react-calendar/dist/Calendar.css';
+
+moment.tz.setDefault('Asia/Seoul');
 
 const Container = styled.div`
   width: 100%;
@@ -63,25 +70,69 @@ const CP = styled.span`
   cursor: pointer;
 `;
 
+const AttendanceCaldendar = styled(Calendar)`
+  margin: 20px auto;
+  width: 30%;
+  border-radius: 10px;
+  border: none;
+  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+  margin-bottom: 20px;
+  & button {
+    position: relative;
+  }
+`;
+
+const Dot = styled.div`
+  position: absolute;
+  transform: translateX(-50%);
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 0, 0, 0.8);
+`;
+
+const AttendanceBtn = styled.button`
+  background: none;
+  border: 2px solid #000;
+  border-radius: 50px;
+  padding: 10px;
+  width: 200px;
+  color: #000;
+  cursor: pointer;
+  transition: all .3s ease;
+  &:hover {
+    color: #fff;
+    background-color: #000000aa;
+  }
+`;
+
 const MyPage: React.FC = () => {
   const isLogin = useAuth();
   const [links, setLinks] = useState<linkIF[]>([]);
   const [myLikes, setMyLikes] = useState<number[]>([]);
+  const [date, setDate] = useState<Date>(new Date());
+  const [mark, setMark] = useState<string[]>(['2022-04-11']);
 
   const [CPpopupOn, setCPPopupOn] = useState<boolean>(false);
 
   useEffect(() => {
     api.get('/user/likes')
-    .then(data => {
-      setLinks(data.data.links);
+    .then(({data}) => {
+      setLinks(data.links);
     });
     api.get('/link/likes')
-    .then(data => {
+    .then(({data}) => {
       const likes: number[] = [];
-      data.data.likes.forEach((v: likesIF) => {
+      data.likes.forEach((v: likesIF) => {
         likes.push(v.linkUid);
       });
       setMyLikes(likes);
+    });
+
+    api.get('/user/attendance')
+    .then(({data}) => {
+      setMark(data.attendance);
     })
   }, []);
 
@@ -92,6 +143,21 @@ const MyPage: React.FC = () => {
   
   const ChangePwd = () => {
     setCPPopupOn(true);
+  }
+
+  const attendance = () => {
+    api.post('/user/attendance')
+    .then(({data}) => {
+      if(data.success) {
+        toast.success(`${data.day} 출석체크 하였습니다.`);
+        setMark(prev => {
+          return [
+            ...prev,
+            data.day
+          ];
+        });
+      }
+    });
   }
 
   return (
@@ -117,6 +183,24 @@ const MyPage: React.FC = () => {
           </MyLikesContainer>
         </Box>
       )}
+      <Box bottom={20}>
+        <Title>출석체크</Title>
+        <AttendanceCaldendar
+        onChange={setDate}
+        formatDay={(locale, date) => moment(date).format("DD")}
+        value={date}
+        tileContent={({ date, view }) => {
+          if (mark.find((x) => x === moment(date).format("YYYY-MM-DD"))) {
+            return (
+             <Dot />
+           );
+          } else return (<></>);
+        }}
+        />
+      </Box>
+      <Box bottom={70}>
+        <AttendanceBtn onClick={attendance}>출석체크 하기</AttendanceBtn>
+      </Box>
       <Box bottom={15}>
         <LogOut onClick={Logout}>로그아웃</LogOut>
       </Box>

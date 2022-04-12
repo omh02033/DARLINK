@@ -82,14 +82,14 @@ const Card = (props: cardIF) => {
         like: props.isLike.includes(props.link.uid) ? false : true,
         uid: props.link.uid
       })
-      .then(data => {
-        if(data.data.success) {
+      .then(({data}) => {
+        if(data.success) {
           const likes: number[] = [];
-          data.data.likes.forEach((v: likesIF) => {
+          data.likes.forEach((v: likesIF) => {
             likes.push(v.linkUid);
           });
           props.setIsLike(likes);
-          toast.success(data.data.message);
+          toast.success(data.message);
         }
       });
     }

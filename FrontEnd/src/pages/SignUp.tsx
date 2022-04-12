@@ -88,9 +88,9 @@ const SignUp: React.FC = () => {
         name,
         password
       })
-      .then(res => {
-        if(res.data.success) {
-          setCookie('token', res.data.token);
+      .then(({data}) => {
+        if(data.success) {
+          setCookie('token', data.token);
           toast.success("회원가입에 성공했어요.");
           window.location.replace('/myPage');
         }

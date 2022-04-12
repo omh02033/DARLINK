@@ -1,6 +1,5 @@
 import { Router, Request, Response } from 'express';
 import knex from '../config/db';
-import CONF from '../config';
 import { DBLinks, DBLikes } from '../interfaces';
 import needAuth from '../middleware/needAuth';
 

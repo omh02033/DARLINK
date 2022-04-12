@@ -45,9 +45,9 @@ const DeliExperience: React.FC = () => {
   useEffect(() => {
     if(isLogin.user) {
       api.get('/link/likes')
-      .then(data => {
+      .then(({data}) => {
         const likes: number[] = [];
-        data.data.likes.forEach((v: likesIF) => {
+        data.likes.forEach((v: likesIF) => {
           likes.push(v.linkUid);
         });
         setMyLikes(likes);
@@ -57,8 +57,8 @@ const DeliExperience: React.FC = () => {
 
   useEffect(() => {
     api.post('/link/delivery', {tag: field, page: 0})
-    .then(data => {
-      setLinks(data.data.links);
+    .then(({data}) => {
+      setLinks(data.links);
     });
   }, [field]);
 
@@ -75,12 +75,12 @@ const DeliExperience: React.FC = () => {
 
   useBottomScrollListener(() => {
     api.post('/link/delivery', {tag: field, page: page+1})
-    .then(data => {
+    .then(({data}) => {
       setPage(prev => { return prev+1 });
       setLinks(prev => {
         return [
           ...prev,
-          ...data.data.links
+          ...data.links
         ];
       });
     });

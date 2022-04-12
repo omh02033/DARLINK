@@ -102,10 +102,10 @@ const Login: React.FC = () => {
       uid: userId,
       upw: userPwd
     })
-    .then(res => {
-      if(res.data.success) {
-        setCookie('token', res.data.token);
-        if(res.data.temporary) {
+    .then(({data}) => {
+      if(data.success) {
+        setCookie('token', data.token);
+        if(data.temporary) {
           setCPPopupOn(true);
         } else window.location.replace('/');
       }
