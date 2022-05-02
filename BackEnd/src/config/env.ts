@@ -1,9 +1,3 @@
 import dotenv from 'dotenv';
-import path from 'path';
 
-export default dotenv.config({  // 공개하면 안되는 정보가 저장된 환경파일 불러오기   ex) 이메일 아이디, 비밀번호 등등 민감한 정보들
-  path: path.resolve(
-    __dirname,
-    process.env.NODE_ENV === 'production' ? '.env' : '.env.dev'
-  )
-});
+export default dotenv.config();  // 공개하면 안되는 정보가 저장된 환경파일 불러오기   ex) 이메일 아이디, 비밀번호 등등 민감한 정보들
