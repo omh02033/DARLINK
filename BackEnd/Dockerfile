@@ -2,7 +2,7 @@ FROM node:12
 
 WORKDIR /usr/src/app
 
-COPY package-lock.lock ./
+COPY package-lock.json ./
 COPY package.json ./
 
 RUN npm install
