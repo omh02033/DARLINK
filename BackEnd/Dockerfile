@@ -2,15 +2,15 @@ FROM node:12
 
 WORKDIR /usr/src/app
 
-COPY yarn.lock ./
+COPY package-lock.lock ./
 COPY package.json ./
 
-RUN yarn install
+RUN npm install
 
 COPY . .
 
 EXPOSE 3000
 
-RUN yarn build
+RUN npm build
 
-CMD ["yarn", "start"]
+CMD ["npm", "start"]
