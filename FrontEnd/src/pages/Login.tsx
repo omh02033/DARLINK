@@ -113,7 +113,7 @@ const Login: React.FC = () => {
   }
 
   const kakaoLoginPage = () => {
-    const popup = window.open(process.env.REACT_APP_BACK_URL, 'kakaoLogin', 'width=500,height=800,top=100,left=200,location=no');
+    const popup = window.open(`${process.env.REACT_APP_BACK_URL}/auth/login/kakao`, 'kakaoLogin', 'width=500,height=800,top=100,left=200,location=no');
     const interval = setInterval(() => {
       try {
         if(popup == null || popup.closed) {
