@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import { getCookie } from "api";
 
 const api = axios.create({
-  baseURL: 'https://api.darlink.xyz',
+  baseURL: process.env.REACT_APP_BACK_URL,
   timeout: 5000
 });
 
