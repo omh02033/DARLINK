@@ -11,6 +11,7 @@ const Container = styled.div`
 `;
 
 const Main: React.FC = () => {
+  console.log(process.env.REACT_APP_BACK_URL);
   return (
     <Container>
       <span>BANNER</span>
