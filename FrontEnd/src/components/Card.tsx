@@ -103,7 +103,7 @@ const Card = (props: cardIF) => {
     props.link && (
       <Container>
         <ImageBox onClick={goLink}>
-          <Image src={`${props.link.image.substring(0, 1) === '/' ? 'https://api.darlink.xyz' : ''}${props.link.image}`} />
+          <Image src={`${props.link.image.substring(0, 1) === '/' ? process.env.REACT_APP_BACK_URL : ''}${props.link.image}`} />
         </ImageBox>
         <Bar>
           <Title>{props.link.title}</Title>
