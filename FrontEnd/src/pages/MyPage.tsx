@@ -172,7 +172,7 @@ const MyPage: React.FC = () => {
             {links?.map((link, i) => {
               return (
                 <Card
-                  isLogin={isLogin.user ? true : false}
+                  isLogin={isLogin.user || false}
                   isLike={myLikes}
                   setIsLike={setMyLikes}
                   link={link}

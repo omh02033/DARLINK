@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import styled from '@emotion/styled';
 import { api } from 'api';
 import { toast } from 'react-toastify';
-import { BsXLg, BsChevronLeft, BsChevronRight } from 'react-icons/bs';
+import { BsXLg, BsChevronLeft, BsChevronRight, BsFillTrashFill } from 'react-icons/bs';
 import { Blinder, Container, Title } from './partial';
 
 
@@ -109,10 +109,37 @@ const BannerBox = styled.div`
   height: 100%;
   display: flex;
   justify-content: center;
-  & img {
+  & > div {
     max-width: 100%;
     max-height: 100%;
+    position: relative;
+    & img {
+      max-width: 100%;
+      max-height: 100%;
+    }
   }
+`;
+
+const DelBtn = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5px;
+  border-radius: 30px;
+  transition: all .2s ease;
+  position: absolute;
+  z-index: 100;
+  right: 0px;
+  top: 0px;
+  cursor: pointer;
+  &:hover {
+    background: #00000022;
+  }
+`;
+const DelIcon = styled(BsFillTrashFill)`
+  width: 20px;
+  height: 20px;
+  color: #ff4848;
 `;
 
 interface banner {
@@ -248,6 +275,19 @@ const SetBanner = ({popupOn, onClose}: PropsIF) => {
     });
   };
 
+  const delBanner = (uid: number) => {
+    api.delete('/manage/banner', {
+      data: {
+        uid
+      },
+    })
+    .then(({data}) => {
+      if(data.success) {
+        bannerLoad();
+      }
+    });
+  }
+
   return (
     <Blinder isOn={popupOn} pst='fixed'>
       <Container isOn={popupOn}>
@@ -259,7 +299,10 @@ const SetBanner = ({popupOn, onClose}: PropsIF) => {
             {banners.map((banner, idx) => {
               return (
                 <BannerBox key={idx}>
-                  <img src={`${process.env.REACT_APP_BACK_URL}${banner.path}`} />
+                  <div>
+                    <img src={`${process.env.REACT_APP_BACK_URL}${banner.path}`} />
+                    <DelBtn onClick={() => {delBanner(banner.uid);}}><DelIcon /></DelBtn>
+                  </div>
                 </BannerBox>
               );
             })}

@@ -20,7 +20,9 @@ const imgStorage = multer.diskStorage({
     fs.mkdirSync(path, { recursive: true });
     cb(null, `${path}/`);
   },
-  filename: function (req, file, cb) { cb(null, file.originalname); }
+  filename: function (req, file, cb) {
+    cb(null, crypto.createHash('sha1').update(file.originalname + Math.random().toString(36).slice(2)).digest('hex'));
+  }
 });
 const imgUpload = multer({ storage: imgStorage });  // 이미지 업로드 미들웨어 설정
 
@@ -73,6 +75,20 @@ router
   });  // 데이터베이스에 링크 등록
   res.status(200).json({ success: true });
 })
+.delete('/link', async (req: Request, res: Response) => {
+  const { uid } = req.body;
+
+  const [link]: Array<DBLinks> = await knex('links').where({ uid });
+
+  if(fs.existsSync(`${__dirname}/../uploads${link.image}`))
+    fs.unlinkSync(`${__dirname}/../uploads${link.image}`);
+  
+  await knex.schema.raw('SET FOREIGN_KEY_CHECKS=0');
+  await knex('links').where({ uid }).del();
+  await knex.schema.raw('SET FOREIGN_KEY_CHECKS=1');
+
+  res.status(200).json({ success: true });
+})
 
 .get('/banner', async (req: Request, res: Response) => {
   const banners: Array<DBBanner> = await knex('banner');
@@ -94,8 +110,8 @@ router
   const { uid } = req.body;
   const [banner]: Array<DBBanner> = await knex('banner').where({ uid });
 
-  if(fs.existsSync(`${__dirname}/../uploads/banner/${banner.uid}`))
-    fs.rmdirSync(`${__dirname}/../uploads/banner/${banner.uid}`, { recursive: true });
+  if(fs.existsSync(`${__dirname}/../uploads${banner.path}`))
+    fs.unlinkSync(`${__dirname}/../uploads${banner.path}`);
 
   await knex('banner').where({ uid }).del();
 

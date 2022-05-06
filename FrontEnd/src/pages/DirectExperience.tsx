@@ -118,11 +118,11 @@ const DirectExperience: React.FC = () => {
 
       {processLink?.map((data, idx) => {
         return (
-          <CardColumn>
+          <CardColumn key={idx}>
             {data.map((link, i) => {
               return (
                 <Card
-                  isLogin={isLogin.user ? true : false}
+                  isLogin={isLogin.user || false}
                   isLike={myLikes}
                   setIsLike={setMyLikes}
                   link={link}

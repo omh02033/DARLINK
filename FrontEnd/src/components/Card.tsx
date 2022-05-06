@@ -1,8 +1,10 @@
+import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { BsHeartFill, BsHeart } from 'react-icons/bs';
+import { BsHeartFill, BsHeart, BsFillTrashFill } from 'react-icons/bs';
 import { toast } from 'react-toastify';
 import { api } from 'api';
 import type { likesIF, linkIF } from 'interfaces/link';
+import { User } from 'hook/auth';
 
 const Container = styled.div`
   width: 180px;
@@ -16,6 +18,7 @@ const Container = styled.div`
   align-items: center;
   background: #fff;
   transition: all 0.3s ease;
+  position: relative;
   &:hover {
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   }
@@ -61,16 +64,37 @@ const FillHeart = styled(BsHeartFill)`
   cursor: pointer;
 `;
 
+const DelBtn = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5px;
+  border-radius: 30px;
+  transition: all .2s ease;
+  position: absolute;
+  z-index: 100;
+  right: 0px;
+  top: 0px;
+  cursor: pointer;
+  &:hover {
+    background: #00000022;
+  }
+`;
+const DelIcon = styled(BsFillTrashFill)`
+  width: 20px;
+  height: 20px;
+  color: #ff4848;
+`;
+
 
 interface cardIF {
   link: linkIF;
-  isLogin: boolean;
+  isLogin: User | false;
   isLike: number[];
   setIsLike: React.Dispatch<React.SetStateAction<number[]>>;
 }
 
 const Card = (props: cardIF) => {
-
   const like = () => {
     if(!props.isLogin) {
       toast.warning("로그인이 필요한 서비스입니다.");
@@ -99,6 +123,19 @@ const Card = (props: cardIF) => {
     window.open(props.link.url);
   }
 
+  const delLink = () => {
+    api.delete('/manage/link', {
+      data: {
+        uid: props.link.uid,
+      },
+    })
+    .then(({data}) => {
+      if(data.success) {
+        window.location.replace(window.location.href);
+      }
+    });
+  }
+
   return (
     props.link && (
       <Container>
@@ -117,6 +154,9 @@ const Card = (props: cardIF) => {
             <Heart onClick={like} />
           )}
         </Bar>
+        {(props.isLogin as User).manager && (
+          <DelBtn onClick={delLink}><DelIcon /></DelBtn>
+        )}
       </Container>
     )
   );
