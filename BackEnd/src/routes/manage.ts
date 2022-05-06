@@ -3,7 +3,8 @@ import knex from '../config/db';
 import CONF from '../config';
 import multer from 'multer';
 import fs from 'fs';
-import { DBLinks } from '../interfaces';
+import { DBBanner, DBLinks } from '../interfaces';
+import crypto from 'crypto';
 
 interface boardId {
   AUTO_INCREMENT: number;
@@ -16,13 +17,24 @@ const imgStorage = multer.diskStorage({
       table_name: 'links'
     });
     const path = __dirname + `/../uploads/${nextBoardId.AUTO_INCREMENT}`;
-    console.log(path);
     fs.mkdirSync(path, { recursive: true });
     cb(null, `${path}/`);
   },
   filename: function (req, file, cb) { cb(null, file.originalname); }
 });
 const imgUpload = multer({ storage: imgStorage });  // 이미지 업로드 미들웨어 설정
+
+const bannerStorage = multer.diskStorage({
+  destination: async function (req, file, cb) {
+    const path = __dirname + `/../uploads/banner`;
+    fs.mkdirSync(path, { recursive: true });
+    cb(null, `${path}/`);
+  },
+  filename: function (req, file, cb) {
+    cb(null, crypto.createHash('sha1').update(file.originalname + Math.random().toString(36).slice(2)).digest('hex'));
+  }
+});
+const bannerUpload = multer({ storage: bannerStorage });
 
 const router = Router();
 
@@ -62,5 +74,32 @@ router
   res.status(200).json({ success: true });
 })
 
+.get('/banner', async (req: Request, res: Response) => {
+  const banners: Array<DBBanner> = await knex('banner');
+  return res.status(200).json({ success: true, banners });
+})
+.post('/banner', bannerUpload.single('file'), async (req: Request, res: Response) => {
+  const path = req.file?.path.substring(req.file?.path.indexOf('uploads')+'uploads'.length, req.file?.path.length)
+  await knex('banner').insert({
+    path,
+  })
+  .catch(err => {
+    console.log(err);
+    res.status(500).json({ success: false, message: '알 수 없는 에러가 발생했습니다.' });
+  });
+
+  res.status(200).json({ success: true });
+})
+.delete('/banner', async (req: Request, res: Response) => {
+  const { uid } = req.body;
+  const [banner]: Array<DBBanner> = await knex('banner').where({ uid });
+
+  if(fs.existsSync(`${__dirname}/../uploads/banner/${banner.uid}`))
+    fs.rmdirSync(`${__dirname}/../uploads/banner/${banner.uid}`, { recursive: true });
+
+  await knex('banner').where({ uid }).del();
+
+  return res.status(200).json({ success: true });
+})
 
 export default router;

@@ -18,6 +18,13 @@ CREATE TABLE `attendance` (
   CONSTRAINT `FK1_USER_UID1` FOREIGN KEY (`userUid`) REFERENCES `users` (`uid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+DROP TABLE IF EXISTS `banner`;
+CREATE TABLE `banner` (
+  `uid` int NOT NULL AUTO_INCREMENT,
+  `path` varchar(50) NOT NULL,
+  PRIMARY KEY (`uid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 DROP TABLE IF EXISTS `likes`;
 CREATE TABLE `likes` (
   `uid` int NOT NULL AUTO_INCREMENT,

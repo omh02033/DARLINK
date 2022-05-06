@@ -2,39 +2,7 @@ import { useState } from 'react';
 import styled from '@emotion/styled';
 import { api } from 'api';
 import { toast } from 'react-toastify';
-
-const Blinder = styled.div<{isOn: boolean}>`
-  width: 100vw;
-  height: 100vh;
-  position: absolute;
-  top: 0;
-  left: 0;
-  background: ${({isOn}) => isOn ? 'rgba(0,0,0,0.5)' : 'rgba(0,0,0,0)'};
-  z-index: ${({isOn}) => isOn ? 10 : -1};
-  opacity: ${({isOn}) => isOn ? 1 : 0};
-  transition: all 0.3s ease;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-const Container = styled.div<{isOn: boolean}>`
-  background: #fff;
-  border-radius: 15px;
-  overflow: none;
-  width: ${({isOn}) => isOn ? 60 : 0}%;
-  height: ${({isOn}) => isOn ? 60 : 0}%;
-  transition: all 0.3s ease;
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-  flex-direction: column;
-  position: relative;
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-`;
-
-const Title = styled.span`
-  font: 30px Sandoll Gothic M;
-`;
+import { Blinder, Container, Title } from './partial';
 
 const PasswordForm = styled.form`
   width: 40%;
@@ -86,7 +54,7 @@ const TemporaryChangePwd = ({popupOn, onClose}: PropsIF) => {
   }
 
   return (
-    <Blinder isOn={popupOn}>
+    <Blinder isOn={popupOn} pst='absolute'>
       <Container isOn={popupOn}>
         <Title>비밀번호를 변경하세요!!</Title>
         <PasswordForm onSubmit={sendPwd}>

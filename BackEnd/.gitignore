@@ -26,3 +26,5 @@ yarn-error.log*
 *.dev
 
 src/uploads/*
+src/uploads/banner/*
+!src/uploads/banner

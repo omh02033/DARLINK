@@ -109,7 +109,7 @@ const MenuTitle = styled.span<{main: boolean}>`
 
 const PageBox = styled.div<{main: boolean}>`
   width: 100%;
-  height: ${({main}) => main ? 20 : 50 }%;
+  height: ${({main}) => main ? 'auto' : '50%' };
   transition: all 0.3s ease;
   display: flex;
   justify-content: center;
@@ -120,14 +120,6 @@ const Boundary = styled.div<{main: boolean}>`
   border: 2px solid black;
   opacity: ${({main}) => main ? 0 : 1};
   transition: all 0.2s ease;
-`;
-const LogoutSpan = styled.span`
-  cursor: pointer;
-  position: absolute;
-  top: 20px;
-  right: 30px;
-  font: 1em Sandoll Gothic L;
-  border-bottom: 1px solid #000;
 `;
 
 const App: React.FC = () => {

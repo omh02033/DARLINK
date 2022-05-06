@@ -3,6 +3,7 @@ import Select from 'react-select';
 import styled from '@emotion/styled';
 import { api } from 'api';
 import { toast } from 'react-toastify';
+import SetBanner from 'components/popup/banner';
 
 const Container = styled.div`
   width: 100%;
@@ -102,6 +103,14 @@ const SubmitBtn = styled.input`
   }
 `;
 
+const BannerSet = styled.span`
+  position: absolute;
+  top: -1em;
+  cursor: pointer;
+  border-bottom: 1px solid #000;
+  font: .9em Sandoll Gothic L;
+`;
+
 const Manage: React.FC = () => {
   const [url, setUrl] = useState<string>("");
   const [fileWhether, setFileWhether] = useState<boolean>(false);
@@ -113,6 +122,8 @@ const Manage: React.FC = () => {
   
   const [isDeli, setIsDeli] = useState<boolean>(true);
   const [isDirect, setIsDirect] = useState<boolean>(false);
+
+  const [isBannerPopup, setIsBannerPopup] = useState<boolean>(false);
 
   const fieldOptions = [
     {value: 'delivery', label: '배송체험'},
@@ -184,9 +195,14 @@ const Manage: React.FC = () => {
     }
   }
 
+  const bannerPopup = () => {
+    setIsBannerPopup(true);
+  }
+
   return (
     <Container>
       <AddForm onSubmit={AddSubmit}>
+        <BannerSet onClick={bannerPopup}>배너 관리</BannerSet>
         <FieldSelector
         options={fieldOptions}
         isSearchable={false}
@@ -247,6 +263,10 @@ const Manage: React.FC = () => {
         type="submit"
         value="등록" />
       </AddForm>
+      <SetBanner
+        popupOn={isBannerPopup}
+        onClose={setIsBannerPopup}
+      />
     </Container>
   );
 }

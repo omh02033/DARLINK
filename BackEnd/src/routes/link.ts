@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import knex from '../config/db';
-import { DBLinks, DBLikes } from '../interfaces';
+import { DBLinks, DBLikes, DBBanner } from '../interfaces';
 import needAuth from '../middleware/needAuth';
 
 const router = Router();
@@ -92,6 +92,12 @@ router
     console.log(err);
     res.status(500).json({ success: false, message: '데이터를 불러오는 중에서 에러가 발생하였습니다.' });
   }
+})
+
+
+.get('/banner', async (req: Request, res: Response) => {
+  const banners: Array<DBBanner> = await knex('banner').select('path');
+  return res.status(200).json({ success: true, banners });
 })
 
 export default router;

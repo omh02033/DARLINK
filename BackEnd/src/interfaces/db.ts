@@ -37,3 +37,8 @@ export interface DBAttendance {
   time: Date;
   day: string;
 }
+
+export interface DBBanner {
+  uid: number;
+  path: string;
+}

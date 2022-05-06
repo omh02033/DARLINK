@@ -3,39 +3,7 @@ import styled from '@emotion/styled';
 import { api } from 'api';
 import { toast } from 'react-toastify';
 import { keyframes } from '@emotion/react';
-
-const Blinder = styled.div<{isOn: boolean}>`
-  width: 100vw;
-  height: 100vh;
-  position: fixed;
-  top: 0;
-  left: 0;
-  background: ${({isOn}) => isOn ? 'rgba(0,0,0,0.5)' : 'rgba(0,0,0,0)'};
-  z-index: ${({isOn}) => isOn ? 10 : -1};
-  opacity: ${({isOn}) => isOn ? 1 : 0};
-  transition: all 0.3s ease;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-const Container = styled.div<{isOn: boolean}>`
-  background: #fff;
-  border-radius: 15px;
-  overflow: none;
-  width: ${({isOn}) => isOn ? 60 : 0}%;
-  height: ${({isOn}) => isOn ? 60 : 0}%;
-  transition: all 0.3s ease;
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-  flex-direction: column;
-  position: relative;
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-`;
-
-const Title = styled.span`
-  font: 30px Sandoll Gothic M;
-`;
+import { Blinder, Container, Title } from './partial';
 
 const EmailForm = styled.form`
   display: flex;
@@ -56,7 +24,7 @@ const EmailFieldBox = styled.div`
     width: 100%;
   }
   & > span {
-    font: 1.2em Sandoll Gothic L;
+    font: 1em Sandoll Gothic L;
   }
 `;
 const EmailField = styled.input`
@@ -168,17 +136,17 @@ const FPPopup = ({popupOn, onClose}: PropsIF) => {
   }
 
   return (
-    <Blinder isOn={popupOn}>
+    <Blinder isOn={popupOn} pst='absolute'>
       <Container isOn={popupOn}>
         <Title>비밀번호를 잃어버리셨군요!!</Title>
         <EmailForm onSubmit={sendPwd}>
           <EmailFieldBox>
-          <EmailField
-          type="email"
-          onChange={(e) => {setEmail(e.target.value);}}
-          value={email}
-          placeholder="이메일 입력" />
-          <span>가입하신 이메일로 비밀번호를 전송해 드리겠습니다.</span>
+            <EmailField
+            type="email"
+            onChange={(e) => {setEmail(e.target.value);}}
+            value={email}
+            placeholder="이메일 입력" />
+            <span>가입하신 이메일로 비밀번호를 전송해 드리겠습니다.</span>
           </EmailFieldBox>
           <FPSubmit type="submit" value="임시 비밀번호 전송" />
         </EmailForm>
