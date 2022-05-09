@@ -23,8 +23,10 @@ router
     await knex('users').update({
       password: hashPassword,
       passwordSalt
-    })
-    .catch(err => {
+    }).where({
+      uid: req.auth.uid,
+      userId: req.auth.userId,
+    }).catch(err => {
       console.log(err);
       return res.status(500).json({ success: false, message: "비밀번호 변경하는 과정에서 에러가 발생했어요." });
     });
@@ -68,16 +70,18 @@ router
 
 .get('/attendance', async (req: Request, res: Response) => {
   const attendance: Array<DBAttendance> = await knex('attendance').where({ userUid: req.auth.uid });
+  const [{points}]: Array<DBUser> = await knex('users').where({ uid: req.auth.uid });
 
   res.status(200).json({
     attendance: [
       ...attendance.map(v => {return v.day})
-    ]
+    ],
+    points
   });
 })
 .post('/attendance', async (req: Request, res: Response) => {
   const attendance: Array<DBAttendance> = await knex('attendance').where({ userUid: req.auth.uid });
-  const info = [...attendance.map(v => {return v.day})];
+  const info = [...attendance.map(v => v.day)];
 
   const today = moment().format('YYYY-MM-DD');
 
@@ -92,9 +96,20 @@ router
       return res.status(500).json({ message: '출석체크 중 오류가 발생하였습니다.' });
     });
 
+    const [{points}]: Array<DBUser> = await knex('users').where({ uid: req.auth.uid });
+    await knex('users').update({
+      points: points+1,
+    }).where({
+      uid: req.auth.uid
+    }).catch(err => {
+      console.log(err);
+      return res.status(500).json({ message: '출석체크 중 오류가 발생하였습니다.' });
+    });
+
     return res.status(200).json({
       success: true,
-      day: today
+      day: today,
+      points: points+1
     });
   }
 })

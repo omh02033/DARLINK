@@ -85,6 +85,7 @@ router
   
   await knex.schema.raw('SET FOREIGN_KEY_CHECKS=0');
   await knex('links').where({ uid }).del();
+  await knex('likes').where({ linkUid: uid }).del();
   await knex.schema.raw('SET FOREIGN_KEY_CHECKS=1');
 
   res.status(200).json({ success: true });

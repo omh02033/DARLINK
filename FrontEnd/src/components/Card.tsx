@@ -92,6 +92,7 @@ interface cardIF {
   isLogin: User | false;
   isLike: number[];
   setIsLike: React.Dispatch<React.SetStateAction<number[]>>;
+  noDel?: boolean;
 }
 
 const Card = (props: cardIF) => {
@@ -154,7 +155,7 @@ const Card = (props: cardIF) => {
             <Heart onClick={like} />
           )}
         </Bar>
-        {(props.isLogin as User).manager && (
+        {((props.isLogin as User).manager && !props.noDel) && (
           <DelBtn onClick={delLink}><DelIcon /></DelBtn>
         )}
       </Container>

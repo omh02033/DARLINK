@@ -8,6 +8,7 @@ import CPPopup from 'components/popup/changePasswd';
 import Calendar from 'react-calendar';
 import { toast } from 'react-toastify';
 import moment from 'moment-timezone';
+import { ReactComponent as Candy } from 'stylesheets/images/candy.svg';
 
 import 'react-calendar/dist/Calendar.css';
 
@@ -29,9 +30,9 @@ const WellCome = styled.span`
   font: 1.5em Sandoll Gothic M;
 `;
 
-const Title = styled.div`
+const Title = styled.div<{ width: number }>`
   position: absolute;
-  width: 75%;
+  width: ${({width}) => width}%;
   font: 1.3em Sandoll Gothic L;
   top: -10px;
 `;
@@ -107,12 +108,27 @@ const AttendanceBtn = styled.button`
   }
 `;
 
+const CandyBox = styled.div`
+  height: 100%;
+  position: absolute;
+  right: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  font-size: .8em;
+`;
+const CandyIcn = styled(Candy)`
+  height: 80%;
+  margin-right: 10px;
+`;
+
 const MyPage: React.FC = () => {
   const isLogin = useAuth();
   const [links, setLinks] = useState<linkIF[]>([]);
   const [myLikes, setMyLikes] = useState<number[]>([]);
   const [date, setDate] = useState<Date>(new Date());
   const [mark, setMark] = useState<string[]>(['2022-04-11']);
+  const [candy, setCandy] = useState<number>(0);
 
   const [CPpopupOn, setCPPopupOn] = useState<boolean>(false);
 
@@ -133,7 +149,8 @@ const MyPage: React.FC = () => {
     api.get('/user/attendance')
     .then(({data}) => {
       setMark(data.attendance);
-    })
+      setCandy(data.points);
+    });
   }, []);
 
   const Logout = () => {
@@ -156,6 +173,7 @@ const MyPage: React.FC = () => {
             data.day
           ];
         });
+        setCandy(data.points);
       }
     });
   }
@@ -167,7 +185,7 @@ const MyPage: React.FC = () => {
       </Box>
       {links.length > 0 && (
         <Box bottom={50}>
-          <Title>내가 관심있는 캠페인</Title>
+          <Title width={75}>내가 관심있는 캠페인</Title>
           <MyLikesContainer>
             {links?.map((link, i) => {
               return (
@@ -177,6 +195,7 @@ const MyPage: React.FC = () => {
                   setIsLike={setMyLikes}
                   link={link}
                   key={i}
+                  noDel={true}
                 />
               )
             })}
@@ -184,7 +203,7 @@ const MyPage: React.FC = () => {
         </Box>
       )}
       <Box bottom={20}>
-        <Title>출석체크</Title>
+        <Title width={30}>출석체크<CandyBox><CandyIcn />{candy} 개</CandyBox></Title>
         <AttendanceCaldendar
         onChange={setDate}
         formatDay={(locale, date) => moment(date).format("DD")}
@@ -192,8 +211,8 @@ const MyPage: React.FC = () => {
         tileContent={({ date, view }) => {
           if (mark.find((x) => x === moment(date).format("YYYY-MM-DD"))) {
             return (
-             <Dot />
-           );
+              <Dot />
+            );
           } else return (<></>);
         }}
         />
