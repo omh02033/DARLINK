@@ -122,24 +122,26 @@ const BannerBox = styled.div`
 `;
 
 const DelBtn = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 5px;
-  border-radius: 30px;
-  transition: all .2s ease;
-  position: absolute;
-  z-index: 10000;
-  right: 0px;
-  top: 0px;
+  background: #000000cc;
+  transition: all .3s ease;
+  opacity: 0;
+  z-index: 100;
   cursor: pointer;
   &:hover {
-    background: #00000022;
+    opacity: 1;
   }
 `;
 const DelIcon = styled(BsFillTrashFill)`
-  width: 20px;
-  height: 20px;
+  width: 40px;
+  height: 40px;
   color: #ff4848;
 `;
 
@@ -301,8 +303,8 @@ const SetBanner = ({popupOn, onClose}: PropsIF) => {
               return (
                 <BannerBox key={idx}>
                   <div>
-                    <img src={`${process.env.REACT_APP_BACK_URL}${banner.path}`} />
                     <DelBtn onClick={() => {delBanner(banner.uid);}}><DelIcon /></DelBtn>
+                    <img src={`${process.env.REACT_APP_BACK_URL}${banner.path}`} />
                   </div>
                 </BannerBox>
               );
