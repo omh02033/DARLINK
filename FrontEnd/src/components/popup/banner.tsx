@@ -77,7 +77,7 @@ const PrevBtn = styled(BsChevronLeft)`
   cursor: pointer;
   &:hover {
     background: #00000033;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(3px);
   }
 `;
 const NextBtn = styled(BsChevronRight)`
@@ -91,7 +91,7 @@ const NextBtn = styled(BsChevronRight)`
   cursor: pointer;
   &:hover {
     background: #00000022;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(3px);
   }
 `;
 
@@ -109,6 +109,7 @@ const BannerBox = styled.div`
   height: 100%;
   display: flex;
   justify-content: center;
+  align-items: center;
   & > div {
     max-width: 100%;
     max-height: 100%;
@@ -128,7 +129,7 @@ const DelBtn = styled.div`
   border-radius: 30px;
   transition: all .2s ease;
   position: absolute;
-  z-index: 100;
+  z-index: 10000;
   right: 0px;
   top: 0px;
   cursor: pointer;

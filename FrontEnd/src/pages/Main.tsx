@@ -29,7 +29,7 @@ const PrevBtn = styled(BsChevronLeft)`
   cursor: pointer;
   &:hover {
     background: #00000033;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(3px);
   }
 `;
 const NextBtn = styled(BsChevronRight)`
@@ -43,7 +43,7 @@ const NextBtn = styled(BsChevronRight)`
   cursor: pointer;
   &:hover {
     background: #00000022;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(3px);
   }
 `;
 
@@ -57,10 +57,11 @@ const BannerContainer = styled.div<{pages: number, nowPage: number}>`
   display: flex;
 `;
 const BannerBox = styled.div`
-  width: 720px;
+  width: 100%;
   height: 100%;
   display: flex;
   justify-content: center;
+  align-items: center;
   & img {
     max-width: 100%;
     max-height: 100%;
@@ -70,10 +71,6 @@ const BannerBox = styled.div`
 const NothingBanner = styled.div`
   width: 100%;
   height: 100%;
-  background: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 `;
 
 interface banner {
@@ -116,7 +113,7 @@ const Main: React.FC = () => {
         <>
           <PrevBtn onClick={PrevBanner} />
           <NextBtn onClick={NextBanner} />
-          <BannerContainer pages={banners?.length+1} nowPage={nowPage}>
+          <BannerContainer pages={banners?.length === 0 ? 1 : banners?.length} nowPage={nowPage}>
             {banners.map((banner, idx) => {
               return (
                 <BannerBox key={idx}>
@@ -127,7 +124,7 @@ const Main: React.FC = () => {
           </BannerContainer>
         </>
       ) : (
-        <NothingBanner>배너를 등록해주세요<br />관리 → 배너 관리</NothingBanner>
+        <NothingBanner />
       )}
     </Container>
   );
