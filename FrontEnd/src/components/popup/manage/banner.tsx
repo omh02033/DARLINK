@@ -7,7 +7,7 @@ import { Blinder, Container, Title, CloseBox, PropsIF } from '../partial';
 
 const BannerForm = styled.form`
   width: 720px;
-  height: 300px;
+  height: 315px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -25,7 +25,7 @@ const Label = styled.label`
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 100%;
+  height: 300px;
   border: 1px dashed black;
   &.Dragging {
     background-color: black;
@@ -53,9 +53,9 @@ const PrevBtn = styled(BsChevronLeft)`
   position: absolute;
   left: 0;
   transform: translateY(-50%);
-  top: 50%;
+  top: calc(50% - 7.5px);
   width: 30px;
-  height: 100%;
+  height: 300px;
   z-index: 1000;
   cursor: pointer;
   &:hover {
@@ -67,9 +67,9 @@ const NextBtn = styled(BsChevronRight)`
   position: absolute;
   right: 0;
   transform: translateY(-50%);
-  top: 50%;
+  top: calc(50% - 7.5px);
   width: 30px;
-  height: 100%;
+  height: 300px;
   z-index: 1000;
   cursor: pointer;
   &:hover {
@@ -89,10 +89,11 @@ const BannerContainer = styled.div<{pages: number, nowPage: number}>`
 `;
 const BannerBox = styled.div`
   width: 720px;
-  height: 100%;
+  height: 300px;
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
   & > div {
     max-width: 100%;
     max-height: 100%;
@@ -204,6 +205,29 @@ const ToggleLabel = styled.label`
     border-radius: 2em;
     transition: all .3s ease;
     content: '';
+  }
+`;
+
+const DotBox = styled.div`
+  position: absolute;
+  bottom: 0px;
+  height: 15px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+const Dot = styled.div`
+  width: 8px;
+  height: 8px;
+  background: #00000033;
+  border-radius: 50%;
+  margin: 0 10px;
+  transition: all .2s ease;
+  &.active {
+    width: 10px;
+    height: 10px;
+    background: #000000;
   }
 `;
 
@@ -424,6 +448,15 @@ const SetBanner = ({popupOn, onClose}: PropsIF) => {
               )}
             </BannerBox>
           </BannerContainer>
+          {banners.length !== nowPage && (
+            <DotBox>
+              {banners.map((banner, idx) => {
+                return (
+                  <Dot key={idx+100} className={nowPage === idx ? 'active' : ''} />
+                );
+              })}
+            </DotBox>
+          )}
         </BannerForm>
         <CloseBox onClick={closePopup}>
           <BsXLg/>
