@@ -96,7 +96,13 @@ router
   return res.status(200).json({ success: true, banners });
 })
 .post('/banner', bannerUpload.single('file'), async (req: Request, res: Response) => {
-  const path = req.file?.path.substring(req.file?.path.indexOf('uploads')+'uploads'.length, req.file?.path.length)
+  const isFile = JSON.parse(req.body.isFile);
+  let path;
+  if(isFile) {
+    path = req.file?.path.substring(req.file?.path.indexOf('uploads')+'uploads'.length, req.file?.path.length)
+  } else {
+    path = req.body.url;
+  }
   await knex('banner').insert({
     path,
   })

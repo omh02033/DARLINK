@@ -2,7 +2,7 @@ import { useState } from 'react';
 import styled from '@emotion/styled';
 import { api } from 'api';
 import { toast } from 'react-toastify';
-import { Blinder, Container, Title } from './partial';
+import { Blinder, Container, Title, PropsIF } from './partial';
 
 const PasswordForm = styled.form`
   width: 40%;
@@ -29,11 +29,6 @@ const PasswordSubmitBtn = styled.input`
     box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
   }
 `;
-
-interface PropsIF {
-  popupOn: boolean;
-  onClose: Function;
-}
 
 const TemporaryChangePwd = ({popupOn, onClose}: PropsIF) => {
   const [password, setPassword] = useState<string>("");

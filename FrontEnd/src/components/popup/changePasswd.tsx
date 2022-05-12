@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { api } from 'api';
 import { toast } from 'react-toastify';
 import { BsXLg } from 'react-icons/bs';
-import { Blinder, Container, Title } from './partial';
+import { Blinder, Container, Title, PropsIF } from './partial';
 
 const PasswordForm = styled.form`
   width: 40%;
@@ -46,11 +46,6 @@ const CloseBox = styled.div`
     background: #00000033;
   }
 `;
-
-interface PropsIF {
-  popupOn: boolean;
-  onClose: Function;
-}
 
 const ChangePwd = ({popupOn, onClose}: PropsIF) => {
   const [password, setPassword] = useState<string>("");

@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { api } from 'api';
 import { toast } from 'react-toastify';
 import { keyframes } from '@emotion/react';
-import { Blinder, Container, Title } from './partial';
+import { Blinder, Container, Title, PropsIF } from './partial';
 
 const EmailForm = styled.form`
   display: flex;
@@ -107,11 +107,6 @@ const Loader = styled.div`
   top: 50%;
   left: 50%;
 `;
-
-interface PropsIF {
-  popupOn: boolean;
-  onClose: Function;
-}
 
 const FPPopup = ({popupOn, onClose}: PropsIF) => {
   const [email, setEmail] = useState<string>("");

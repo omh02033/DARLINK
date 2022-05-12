@@ -9,6 +9,7 @@ export const Blinder = styled.div<{isOn: boolean, pst: string}>`
   background: ${({isOn}) => isOn ? 'rgba(0,0,0,0.5)' : 'rgba(0,0,0,0)'};
   z-index: ${({isOn}) => isOn ? 10 : -1};
   opacity: ${({isOn}) => isOn ? 1 : 0};
+  visibility: ${({isOn}) => isOn ? 'visible' : 'hidden'};
   transition: all 0.2s ease-out;
   display: flex;
   justify-content: center;
@@ -32,3 +33,24 @@ export const Container = styled.div<{isOn: boolean}>`
 export const Title = styled.span`
   font: 30px Sandoll Gothic M;
 `;
+
+export const CloseBox = styled.div`
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 30px;
+  transition: all 0.3s ease;
+  &:hover {
+    background: #00000033;
+  }
+`;
+
+export interface PropsIF {
+  popupOn: boolean;
+  onClose: Function;
+};

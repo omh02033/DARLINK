@@ -117,7 +117,7 @@ const Main: React.FC = () => {
             {banners.map((banner, idx) => {
               return (
                 <BannerBox key={idx}>
-                  <img src={`${process.env.REACT_APP_BACK_URL}${banner.path}`} />
+                  <img src={`${banner.path.substring(0, 1) === '/' ? process.env.REACT_APP_BACK_URL : ''}${banner.path}`} />
                 </BannerBox>
               );
             })}
