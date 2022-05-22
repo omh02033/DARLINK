@@ -33,6 +33,7 @@ const DirectExperience: React.FC = () => {
   const [location, setLocation] = useState<string[]>(['seoul', 'gyeonggi', 'junla', 'gangwon', 'gyeongsang']);
   const [tag, setTag] = useState<string[]>(['food', 'sports', 'caffee', 'etc']);
   const [page, setPage] = useState<number>(0);
+  const [pageEnd, setPageEnd] = useState<boolean>(false);
 
   const directLocationOptions: any = {
     seoul: '서울',
@@ -85,16 +86,20 @@ const DirectExperience: React.FC = () => {
   }, [links]);
 
   useBottomScrollListener(() => {
-    api.post('/link/direct', {location, tag, page: page+1})
-    .then(({data}) => {
-      setPage(prev => { return prev+1 });
-      setLinks(prev => {
-        return [
-          ...prev,
-          ...data.links
-        ];
+    if(!pageEnd) {
+      api.post('/link/direct', {location, tag, page: page+1})
+      .then(({data}) => {
+        if(data.links.length > 0) {
+          setPage(prev => { return prev+1 });
+          setLinks(prev => {
+            return [
+              ...prev,
+              ...data.links
+            ];
+          });
+        } else setPageEnd(true);
       });
-    });
+    }
   });
 
   return (

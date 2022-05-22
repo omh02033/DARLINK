@@ -31,6 +31,7 @@ const DeliExperience: React.FC = () => {
   const isLogin = useAuth();
   const [field, setField] = useState<string[]>(['food', 'etc', 'reporters', 'beauty']);
   const [page, setPage] = useState<number>(0);
+  const [pageEnd, setPageEnd] = useState<boolean>(false);
 
   const names: any = {
     food: '음식',
@@ -60,6 +61,7 @@ const DeliExperience: React.FC = () => {
     api.post('/link/delivery', {tag: field, page: 0})
     .then(({data}) => {
       setLinks(data.links);
+      setPage(0);
     });
   }, [field]);
 
@@ -75,16 +77,20 @@ const DeliExperience: React.FC = () => {
   }, [links]);
 
   useBottomScrollListener(() => {
-    api.post('/link/delivery', {tag: field, page: page+1})
-    .then(({data}) => {
-      setPage(prev => { return prev+1 });
-      setLinks(prev => {
-        return [
-          ...prev,
-          ...data.links
-        ];
+    if(!pageEnd) {
+      api.post('/link/delivery', {tag: field, page: page+1})
+      .then(({data}) => {
+        if(data.links.length > 0) {
+          setPage(prev => { return prev+1 });
+          setLinks(prev => {
+            return [
+              ...prev,
+              ...data.links
+            ];
+          });
+        } else setPageEnd(true);
       });
-    });
+    }
   });
 
   return (
