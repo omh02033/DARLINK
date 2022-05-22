@@ -73,7 +73,7 @@ const TargetSelector = styled.div`
   border-radius: 10px;
   z-index: -1;
   &.active {
-    z-index: 10;
+    z-index: 1000;
     display: flex;
     opacity: 1;
     top: 100%;
