@@ -24,7 +24,7 @@ const CardColumn = styled.div`
   width: 100%;
   display: flex;
   justify-content: space-evenly;
-  border-bottom: 20px;
+  margin-bottom: 20px;
 `;
 
 const DeliExperience: React.FC = () => {
